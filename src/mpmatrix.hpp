@@ -79,5 +79,4 @@ namespace mpmatrix {
         return os << std::endl;
     }
 
-    bool cholesky(const MpMatrix &initial, MpMatrix &lower);
 }

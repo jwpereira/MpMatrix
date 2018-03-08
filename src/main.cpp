@@ -1,6 +1,7 @@
 #include <iostream>
 #include <gmpxx.h>
 #include "mpmatrix.hpp"
+#include "mpm_algorithm.hpp"
 #include "prettymp.hpp"
 
 using namespace mpmatrix;

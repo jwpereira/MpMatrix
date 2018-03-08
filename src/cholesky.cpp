@@ -1,5 +1,6 @@
 #include <gmpxx.h>
 #include "mpmatrix.hpp"
+#include "mpm_algorithm.hpp"
 
 using namespace mpmatrix;
 
