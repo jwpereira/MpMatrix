@@ -13,10 +13,6 @@ namespace mpmatrix {
         size_t dim;       // dimension * dimension = size [we're working with square matricies]
         mp_bitcnt_t prec; // precision of each number
 
-        size_t getDim() const {
-            return this->dim;
-        }
-
       public:
         MpMatrix(size_t dim, mp_bitcnt_t prec) : dim(dim), prec(prec) {
             this->matrix = std::vector<mpf_class>(dim * dim, mpf_class(0, prec));
@@ -72,7 +68,7 @@ namespace mpmatrix {
         for (auto &mp : matrix) {
             counter++;
             os << mp << '\t';
-            if (counter % matrix.getDim() == 0) {
+            if (counter % matrix.getDimension() == 0) {
                 os << '\n';
             }
         }
