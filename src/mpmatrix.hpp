@@ -62,12 +62,13 @@ namespace mpmatrix {
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
 
-    inline std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix) {
-        size_t counter = 0;
-<<<<<<< HEAD
-=======
+    inline std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix) {        
+        //Capture the initial flags of the output stream
+        std::ios::fmtflags initialFlags(os.flags());
 
->>>>>>> 8f08202... remove bitsFromDigits; may not be correct
+        std::cout.precision(matrix.getPrecision());
+
+        size_t counter = 0;
         for (auto &mp : matrix) {
             counter++;
             os << mp << '\t';
@@ -75,6 +76,9 @@ namespace mpmatrix {
                 os << '\n';
             }
         }
+
+        //Restore the initial flags of the output streams
+        os.flags(initialFlags);
 
         return os << std::endl;
     }
