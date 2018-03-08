@@ -18,10 +18,20 @@ int main(int argc, char *argv[]) {
         mpf_class(42_mpf, m_prec), mpf_class(62_mpf, m_prec), mpf_class(134_mpf,m_prec), mpf_class(106_mpf,m_prec)
     };
 
-    MpMatrix m2(m_dim, 8, m_raw, (m_raw + (m_dim * m_dim)));
+    MpMatrix m(m_dim, 8, m_raw, (m_raw + (m_dim * m_dim)));
 
     std::cout << "Before:\n";
-    std::cout << m2 << std::endl;
+    std::cout << m << std::endl;
+
+    mp_bitcnt_t m_cholesky_prec = 256;
+    MpMatrix m_cholesky(m_dim, m_cholesky_prec);
+
+    if (mpmatrix::cholesky(m, m_cholesky)) {
+        std::cout << "After:\n";
+        std::cout << m_cholesky << std::endl;
+    } else {
+        std::cout << "An error occured:\n";
+    }    
 
     return 0;
 }
