@@ -20,13 +20,13 @@ int main(int argc, char *argv[]) {
         mpz_class(42_mpz), mpz_class(62_mpz), mpz_class(134_mpz), mpz_class(106_mpz)
     };
 
-    MpMatrix m(m_dim, 8, m_raw, (m_raw + (m_dim * m_dim)));
+    MpMatrix m(m_dim, m_raw, (m_raw + (m_dim * m_dim)));
 
     std::cout << "Before:\n";
     std::cout << m << std::endl;
 
     mp_bitcnt_t m_cholesky_prec = 256;
-    MpMatrix m_cholesky(m_dim, m_cholesky_prec);
+    MpMatrix m_cholesky(m_dim);
 
     if (cholesky(m, m_cholesky)) {
         std::cout << "After:\n";
