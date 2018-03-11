@@ -13,11 +13,11 @@ int main(int argc, char *argv[]) {
 
     size_t m_dim = 4;
     mp_bitcnt_t m_prec = 8;
-    mpf_class m_raw[] = {
-        mpf_class(18_mpf, m_prec), mpf_class(22_mpf, m_prec), mpf_class(54_mpf, m_prec), mpf_class(42_mpf, m_prec),  
-        mpf_class(22_mpf, m_prec), mpf_class(70_mpf, m_prec), mpf_class(86_mpf, m_prec), mpf_class(62_mpf, m_prec),
-        mpf_class(54_mpf, m_prec), mpf_class(86_mpf, m_prec), mpf_class(174_mpf,m_prec), mpf_class(134_mpf,m_prec), 
-        mpf_class(42_mpf, m_prec), mpf_class(62_mpf, m_prec), mpf_class(134_mpf,m_prec), mpf_class(106_mpf,m_prec)
+    mpz_class m_raw[] = {
+        mpz_class(18_mpz), mpz_class(22_mpz), mpz_class(54_mpz) , mpz_class(42_mpz),  
+        mpz_class(22_mpz), mpz_class(70_mpz), mpz_class(86_mpz) , mpz_class(62_mpz),
+        mpz_class(54_mpz), mpz_class(86_mpz), mpz_class(174_mpz), mpz_class(134_mpz), 
+        mpz_class(42_mpz), mpz_class(62_mpz), mpz_class(134_mpz), mpz_class(106_mpz)
     };
 
     MpMatrix m(m_dim, 8, m_raw, (m_raw + (m_dim * m_dim)));
