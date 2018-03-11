@@ -9,34 +9,29 @@
 namespace mpmatrix {
     class MpMatrix {
       private:
-        std::vector<mpf_class> matrix;
+        std::vector<mpz_class> matrix;
         size_t dim;       // dimension * dimension = size [we're working with square matricies]
-        mp_bitcnt_t prec; // precision of each number
 
       public:
-        MpMatrix(size_t dim, mp_bitcnt_t prec) : dim(dim), prec(prec) {
-            this->matrix = std::vector<mpf_class>(dim * dim, mpf_class(0, prec));
+        MpMatrix(size_t dim) : dim(dim) {
+            this->matrix = std::vector<mpz_class>(dim * dim, mpz_class(0));
         }
 
         template <typename Iterator>
-        MpMatrix(size_t dim, mp_bitcnt_t prec, Iterator begin, Iterator end) : MpMatrix(dim, prec) {
+        MpMatrix(size_t dim, Iterator begin, Iterator end) : MpMatrix(dim) {
             std::copy(begin, end, this->matrix.begin());
         }
 
-        mpf_class &operator()(size_t row, size_t col) {
+        mpz_class &operator()(size_t row, size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
 
-        mpf_class &operator()(size_t row, size_t col) const {
-            return const_cast<mpf_class&>(this->matrix[(row * this->dim) + col]);
+        mpz_class &operator()(size_t row, size_t col) const {
+            return const_cast<mpz_class&>(this->matrix[(row * this->dim) + col]);
         }
 
         size_t getDimension() const {
             return this->dim;
-        }
-
-        mp_bitcnt_t getPrecision() const {
-            return this->prec;
         }
 
         decltype(auto) begin() const {
@@ -62,7 +57,7 @@ namespace mpmatrix {
         //Capture the initial flags of the output stream
         std::ios::fmtflags initialFlags(os.flags());
 
-        std::cout.precision(matrix.getPrecision());
+        // std::cout.precision(matrix.getPrecision());
 
         size_t counter = 0;
         for (auto &mp : matrix) {
