@@ -10,15 +10,14 @@ bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
     }
 
     size_t dim = initial.getDimension();
-    mp_bitcnt_t prec = lower.getPrecision();    // the output matrix decides the final precision
 
     for (size_t i = 0; i < dim; i++) {
         for (size_t j = 0; j <= i; j++) {
-            mpf_class sum(0_mpf, prec);
+            mpz_class sum(0_mpz);
             if (j == i) {
                 for (size_t k = 0; k < j; k++) {
-                    mpf_class addend(0_mpf, prec);
-                    mpf_pow_ui(addend.get_mpf_t(), lower(j, k).get_mpf_t(), 2);
+                    mpz_class addend(0_mpz);
+                    mpz_pow_ui(addend.get_mpz_t(), lower(j, k).get_mpz_t(), 2);
                     sum += addend;
                 }
                 lower(j, j) = sqrt(initial(j, j) - sum);
