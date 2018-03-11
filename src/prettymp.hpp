@@ -18,7 +18,6 @@ namespace mpmatrix {
 
     class SetPrecPrint : virtual public PrettyMpMatrixBase {
       private:
-        size_t prec;
         void pretty_print(std::ostream &os) const {
             //Capture the initial flags of the output stream
             std::ios::fmtflags initialFlags(os.flags());
@@ -26,8 +25,7 @@ namespace mpmatrix {
             size_t counter = 0;
             for (auto &mp : matrix) {
                 counter++;
-                os << std::setw(this->prec + 5) << std::setfill(' ') << std::left 
-                    << std::setprecision(this->prec) << mp;
+                os << std::setfill(' ') << std::left << mp;
                 if (counter % matrix.getDimension() == 0) {
                     os << '\n';
                 }
@@ -38,12 +36,12 @@ namespace mpmatrix {
             os << std::endl;
         }
       public:
-        SetPrecPrint(MpMatrix &matrix, size_t prec) : 
-            PrettyMpMatrixBase(matrix), prec(prec) {}
+        SetPrecPrint(MpMatrix &matrix) : 
+            PrettyMpMatrixBase(matrix) {}
     };
 
     class DebugPrint : public SetPrecPrint {
       public:
-        DebugPrint(MpMatrix &matrix) : PrettyMpMatrixBase(matrix), SetPrecPrint(matrix, 5) {}
+        DebugPrint(MpMatrix &matrix) : PrettyMpMatrixBase(matrix), SetPrecPrint(matrix) {}
     };
 }
