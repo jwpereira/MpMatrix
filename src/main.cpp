@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
-    fixedmpz numero(1_mpz, 100);
+    fixedmpz numero(1_mpz, 256);
 
     std::cout << numero << std::endl;
 

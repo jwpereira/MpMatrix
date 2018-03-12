@@ -7,10 +7,10 @@ namespace mpmatrix {
     class fixedmpz {
       private:
         mpz_class number;
-        mp_bitcnt_t dot;
-        
+        mp_bitcnt_t scale;
+
       public:
-        fixedmpz(mpz_class number, mp_bitcnt_t dot) : number(number), dot(dot) {}
+        fixedmpz(mpz_class number, mp_bitcnt_t scale) : number(number << scale), scale(scale) {}
 
         operator mpz_class() {
             return this->number;
