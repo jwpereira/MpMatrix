@@ -1,4 +1,5 @@
 #include <iostream>
+#include "fixedmpz.hpp"
 #include <gmpxx.h>
 #include "mpmatrix.hpp"
 #include "mpm_algorithm.hpp"
@@ -11,6 +12,11 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
+    fixedmpz numero(1_mpz, 100);
+
+    std::cout << numero << std::endl;
+
+    /*
     size_t m_dim = 4;
     mp_bitcnt_t m_prec = 8;
     mpz_class m_raw[] = {
@@ -37,6 +43,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Debug:\n";
     std::cout << DebugPrint(m_cholesky);
+    */
 
     return 0;
 }
