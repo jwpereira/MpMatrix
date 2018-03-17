@@ -31,7 +31,7 @@ namespace mpmatrix {
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
     };
 
-    std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
+    inline std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
         return os << fmp.number;
     }
 }
