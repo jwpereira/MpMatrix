@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     std::ios_base::sync_with_stdio(false);
 
     size_t m_dim = 4;
-    mp_bitcnt_t m_scale = 64;
+    mp_bitcnt_t m_scale = 256;
     fixedmpz m_raw[] = {
         fixedmpz(18_mpz << m_scale, m_scale), fixedmpz(22_mpz << m_scale, m_scale), fixedmpz( 54_mpz << m_scale, m_scale), fixedmpz( 42_mpz << m_scale, m_scale),  
         fixedmpz(22_mpz << m_scale, m_scale), fixedmpz(70_mpz << m_scale, m_scale), fixedmpz( 86_mpz << m_scale, m_scale), fixedmpz( 62_mpz << m_scale, m_scale),
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     }    
 
     std::cout << "Debug:\n";
-    std::cout << DebugPrint(m_cholesky);
+    std::cout << PrecPrint(m_cholesky, (64 >> 2));
 
     return 0;
 }

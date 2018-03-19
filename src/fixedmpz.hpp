@@ -33,6 +33,14 @@ namespace mpmatrix {
             this->number = number;
         }
 
+        mpf_class to_mpf() const {
+            mpf_class scaled(0, this->scale);
+            mpf_set_z(scaled.get_mpf_t(), this->get_mpz_t());
+            scaled >>= this->scale;
+
+            return scaled;
+        }
+
         mpz_class &operator()() {
             return this->number;
         }
@@ -113,11 +121,7 @@ namespace mpmatrix {
     }
 
     inline std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
-        mpf_class scaled(0, fmp.scale);
-        mpf_set_z(scaled.get_mpf_t(), fmp.number.get_mpz_t());
-        scaled >>= fmp.scale;
-        
-        return os << scaled;
+        return os << fmp.to_mpf();
     }
 
     inline fixedmpz sq(const fixedmpz &op) {
