@@ -13,6 +13,9 @@ namespace mpmatrix {
         fixedmpz(mpz_class number, mp_bitcnt_t scale) : number(number), scale(scale) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
 
+        // Convenience constructor to help debug in this confusing world
+        fixedmpz(unsigned long number, mp_bitcnt_t scale) : number(mpz_class(number) << scale), scale(scale) {}
+
         mp_bitcnt_t getScale() const {
             return this->scale;
         }
@@ -45,12 +48,13 @@ namespace mpmatrix {
 
         fixedmpz operator*=(const fixedmpz &multiplicand) {
             this->number >>= this->scale;
-            this->number *= (multiplicand.number >> multiplicand.scale);
+            this->number *= (multiplicand.number);
 
             return *this;
         }
 
         fixedmpz operator/=(const fixedmpz &divisor) {
+            this->number <<= this->scale;
             this->number /= divisor.number;
             return *this;
         }
@@ -66,8 +70,7 @@ namespace mpmatrix {
         }
 
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
-        friend void square(fixedmpz &rop, fixedmpz &op);
-        friend decltype(auto) sqrt(fixedmpz &rop);
+        friend fixedmpz sqrt(const fixedmpz &rop);
     };
 
     inline fixedmpz operator+(fixedmpz lhs, const fixedmpz &rhs) {
@@ -101,17 +104,20 @@ namespace mpmatrix {
     }
 
     inline std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
-        return os << fmp.number << ">>" << fmp.scale;
+        auto scaled = fmp.number / (1 << fmp.scale);
+        return os << fmp.number << '(' << std::hex << fmp.number << std::dec << ')'
+            << ">>" << fmp.scale << '=' << scaled
+            << '(' << std::hex << scaled << ')' << std::dec;
     }
 
-    inline void square(fixedmpz &rop, fixedmpz &op) {
-        op >>= op.scale;
-        mpz_pow_ui(rop.get_mpz_t(), op.get_mpz_t(), 2);
+    inline fixedmpz sq(const fixedmpz &op) {
+        return op * op;
     }
 
-    inline decltype(auto) sqrt(fixedmpz &rop) {
-        rop >>= rop.scale;
-        return sqrt(rop.number);
+    inline fixedmpz sqrt(const fixedmpz &rop) {
+        fixedmpz ret = rop << rop.scale;
+        ret.number = sqrt(ret.number);
+        return ret;
     }
 
 }
