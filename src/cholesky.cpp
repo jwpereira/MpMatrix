@@ -13,13 +13,14 @@ bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
 
     for (size_t i = 0; i < dim; i++) {
         for (size_t j = 0; j <= i; j++) {
-            mpz_class sum(0_mpz);
+            std::cout << lower;
+            mp_t sum(0, initial.getScale());
             if (j == i) {
                 for (size_t k = 0; k < j; k++) {
-                    mpz_class addend(0_mpz);
-                    mpz_pow_ui(addend.get_mpz_t(), lower(j, k).get_mpz_t(), 2);
-                    sum += addend;
+                    std::cout << "base: " << lower(j, k) << "\t square: " << sq(lower(j, k)) << std::endl;
+                    sum += sq(lower(j, k));
                 }
+                std::cout << j << " <- sqrt(" << initial(j, j) << " - " << sum << ") = " << sqrt(initial(j, j) - sum) << "| sum = " << sum << std::endl;
                 lower(j, j) = sqrt(initial(j, j) - sum);
             } else {
                 for (size_t k = 0; k < j; k++) {

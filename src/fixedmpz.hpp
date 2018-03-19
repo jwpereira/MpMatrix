@@ -13,27 +13,36 @@ namespace mpmatrix {
         fixedmpz(mpz_class number, mp_bitcnt_t scale) : number(number), scale(scale) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
 
-        // Convenience constructor to help debug in this confusing world
-        fixedmpz(unsigned long number, mp_bitcnt_t scale) : number(mpz_class(number) << scale), scale(scale) {}
-
         mp_bitcnt_t getScale() const {
             return this->scale;
+        }
+
+        decltype(auto) get_mpz_t() {
+            return this->number.get_mpz_t();
+        }
+
+        decltype(auto) get_mpz_t() const {
+            return this->number.get_mpz_t();
         }
 
         void setScale(mp_bitcnt_t scale) {
             this->scale = scale;
         }
 
+        void setNumber(mpz_class number) {
+            this->number = number;
+        }
+
         mpz_class &operator()() {
             return this->number;
         }
 
-        operator mpz_class() {
-            return this->number;
+        mpz_class &operator()() const {
+            return const_cast<mpz_class&>(this->number);
         }
 
-        decltype(auto) get_mpz_t() {
-            return this->number.get_mpz_t();
+        operator mpz_class() {
+            return this->number;
         }
 
         fixedmpz operator+=(const fixedmpz &addend) {
@@ -104,10 +113,14 @@ namespace mpmatrix {
     }
 
     inline std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
-        auto scaled = fmp.number / (1 << fmp.scale);
-        return os << fmp.number << '(' << std::hex << fmp.number << std::dec << ')'
-            << ">>" << fmp.scale << '=' << scaled
-            << '(' << std::hex << scaled << ')' << std::dec;
+        mpf_class scaled(0, fmp.scale);
+        mpf_set_z(scaled.get_mpf_t(), fmp.number.get_mpz_t());
+        scaled >>= fmp.scale;
+        
+        // return os << fmp.number << '(' << std::hex << fmp.number << std::dec << ')'
+        //     << ">>" << fmp.scale << '=' << scaled
+        //     << '(' << std::hex << scaled << ')' << std::dec;
+        return os << scaled;
     }
 
     inline fixedmpz sq(const fixedmpz &op) {
@@ -119,5 +132,4 @@ namespace mpmatrix {
         ret.number = sqrt(ret.number);
         return ret;
     }
-
 }

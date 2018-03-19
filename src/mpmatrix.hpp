@@ -5,29 +5,42 @@
 #include <iomanip>
 #include <gmpxx.h>
 #include <vector>
+#include "fixedmpz.hpp"
 
 namespace mpmatrix {
+    using mp_t = fixedmpz;
+
     class MpMatrix {
       private:
-        std::vector<mpz_class> matrix;
+        std::vector<mp_t> matrix;
         size_t dim;       // dimension * dimension = size [we're working with square matricies]
-
+        mp_bitcnt_t scale;
       public:
-        MpMatrix(size_t dim) : dim(dim) {
-            this->matrix = std::vector<mpz_class>(dim * dim, mpz_class(0));
+        MpMatrix(size_t dim, mp_bitcnt_t scale) : dim(dim), scale(scale) {
+            this->matrix = std::vector<mp_t>(dim * dim, mp_t(0, scale));
         }
 
         template <typename Iterator>
-        MpMatrix(size_t dim, Iterator begin, Iterator end) : MpMatrix(dim) {
-            std::copy(begin, end, this->matrix.begin());
+        MpMatrix(size_t dim, mp_bitcnt_t scale, Iterator begin, Iterator end) : MpMatrix(dim, scale) {
+            //std::copy(begin, end, this->matrix.begin());
+            auto iter = this->matrix.begin();
+            std::for_each(begin, end, [&](auto &val) {
+                iter->setNumber(val);
+                iter->setScale(val.getScale());
+                iter++;
+            });
         }
 
-        mpz_class &operator()(size_t row, size_t col) {
+        mp_t &operator()(size_t row, size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
 
-        mpz_class &operator()(size_t row, size_t col) const {
-            return const_cast<mpz_class&>(this->matrix[(row * this->dim) + col]);
+        mp_t &operator()(size_t row, size_t col) const {
+            return const_cast<mp_t&>(this->matrix[(row * this->dim) + col]);
+        }
+
+        mp_bitcnt_t getScale() const {
+            return this->scale;
         }
 
         size_t getDimension() const {
@@ -57,12 +70,10 @@ namespace mpmatrix {
         //Capture the initial flags of the output stream
         std::ios::fmtflags initialFlags(os.flags());
 
-        // std::cout.precision(matrix.getPrecision());
-
         size_t counter = 0;
-        for (auto &mp : matrix) {
+        for (auto &mp_t : matrix) {
             counter++;
-            os << mp << '\t';
+            os << mp_t << '\t';
             if (counter % matrix.getDimension() == 0) {
                 os << '\n';
             }
