@@ -79,7 +79,7 @@ namespace mpmatrix {
         }
 
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
-        friend fixedmpz sqrt(const fixedmpz &rop);
+        // friend fixedmpz sqrt(const fixedmpz &rop);
     };
 
     inline fixedmpz operator+(fixedmpz lhs, const fixedmpz &rhs) {
@@ -128,8 +128,8 @@ namespace mpmatrix {
     }
 
     inline fixedmpz sqrt(const fixedmpz &rop) {
-        fixedmpz ret = rop << rop.scale;
-        ret.number = sqrt(ret.number);
+        fixedmpz ret = rop << rop.getScale();
+        ret() = sqrt(ret());
         return ret;
     }
 }
