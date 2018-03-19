@@ -56,8 +56,8 @@ namespace mpmatrix {
         }
 
         fixedmpz operator*=(const fixedmpz &multiplicand) {
-            this->number >>= this->scale;
-            this->number *= (multiplicand.number);
+            this->number >>= (this->scale / 2);
+            this->number *= (multiplicand.number >> multiplicand.scale / 2);
 
             return *this;
         }
