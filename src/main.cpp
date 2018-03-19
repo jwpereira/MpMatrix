@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
-    std::cout << "THE SQUARE ROOT OF 174 IS" << sqrt(fixedmpz(174)) << std::endl;
+    std::cout << "THE SQUARE ROOT OF 174 IS " << sqrt(fixedmpz(174)) << std::endl;
 
     fixedmpz a(4096_mpz, 3);
     fixedmpz b(64_mpz, 3);
