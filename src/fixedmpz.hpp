@@ -117,9 +117,6 @@ namespace mpmatrix {
         mpf_set_z(scaled.get_mpf_t(), fmp.number.get_mpz_t());
         scaled >>= fmp.scale;
         
-        // return os << fmp.number << '(' << std::hex << fmp.number << std::dec << ')'
-        //     << ">>" << fmp.scale << '=' << scaled
-        //     << '(' << std::hex << scaled << ')' << std::dec;
         return os << scaled;
     }
 
