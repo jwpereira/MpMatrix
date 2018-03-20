@@ -1,5 +1,7 @@
 #include <iostream>
 #include <gmpxx.h>
+#include "fixedmpz.hpp"
+#include "mpm_algorithm.hpp"
 #include "mpmatrix.hpp"
 #include "prettymp.hpp"
 
@@ -11,21 +13,20 @@ int main(int argc, char *argv[]) {
     std::ios_base::sync_with_stdio(false);
 
     size_t m_dim = 4;
-    mp_bitcnt_t m_prec = 8;
-    mpf_class m_raw[] = {
-        mpf_class(18_mpf, m_prec), mpf_class(22_mpf, m_prec), mpf_class(54_mpf, m_prec), mpf_class(42_mpf, m_prec),  
-        mpf_class(22_mpf, m_prec), mpf_class(70_mpf, m_prec), mpf_class(86_mpf, m_prec), mpf_class(62_mpf, m_prec),
-        mpf_class(54_mpf, m_prec), mpf_class(86_mpf, m_prec), mpf_class(174_mpf,m_prec), mpf_class(134_mpf,m_prec), 
-        mpf_class(42_mpf, m_prec), mpf_class(62_mpf, m_prec), mpf_class(134_mpf,m_prec), mpf_class(106_mpf,m_prec)
+    fmpz_scale m_scale = 256;
+    fixedmpz m_raw[] = {
+        18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
+        22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,
+        54^256_fmpz, 86^256_fmpz, 174^256_fmpz, 134^256_fmpz, 
+        42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
-    MpMatrix m(m_dim, 8, m_raw, (m_raw + (m_dim * m_dim)));
+    MpMatrix m(m_dim, m_scale, m_raw, (m_raw + (m_dim * m_dim)));
 
     std::cout << "Before:\n";
     std::cout << m << std::endl;
 
-    mp_bitcnt_t m_cholesky_prec = 256;
-    MpMatrix m_cholesky(m_dim, m_cholesky_prec);
+    MpMatrix m_cholesky(m_dim, m_scale);
 
     if (cholesky(m, m_cholesky)) {
         std::cout << "After:\n";
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
     }    
 
     std::cout << "Debug:\n";
-    std::cout << DebugPrint(m_cholesky);
+    std::cout << PrecPrint(m_cholesky, (64 >> 2));
 
     return 0;
 }

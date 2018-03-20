@@ -5,38 +5,46 @@
 #include <iomanip>
 #include <gmpxx.h>
 #include <vector>
+#include "fixedmpz.hpp"
 
 namespace mpmatrix {
+    using fmpz = fixedmpz;
+
     class MpMatrix {
       private:
-        std::vector<mpf_class> matrix;
+        std::vector<fmpz> matrix;
         size_t dim;       // dimension * dimension = size [we're working with square matricies]
-        mp_bitcnt_t prec; // precision of each number
-
+        mp_bitcnt_t scale;
       public:
-        MpMatrix(size_t dim, mp_bitcnt_t prec) : dim(dim), prec(prec) {
-            this->matrix = std::vector<mpf_class>(dim * dim, mpf_class(0, prec));
+        MpMatrix(size_t dim, mp_bitcnt_t scale) : dim(dim), scale(scale) {
+            this->matrix = std::vector<fmpz>(dim * dim, fmpz(0, scale));
         }
 
         template <typename Iterator>
-        MpMatrix(size_t dim, mp_bitcnt_t prec, Iterator begin, Iterator end) : MpMatrix(dim, prec) {
-            std::copy(begin, end, this->matrix.begin());
+        MpMatrix(size_t dim, mp_bitcnt_t scale, Iterator begin, Iterator end) : MpMatrix(dim, scale) {
+            //std::copy(begin, end, this->matrix.begin());
+            auto iter = this->matrix.begin();
+            std::for_each(begin, end, [&](auto &val) {
+                iter->setNumber(val);
+                iter->setScale(val.getScale());
+                iter++;
+            });
         }
 
-        mpf_class &operator()(size_t row, size_t col) {
+        fmpz &operator()(size_t row, size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
 
-        mpf_class &operator()(size_t row, size_t col) const {
-            return const_cast<mpf_class&>(this->matrix[(row * this->dim) + col]);
+        fmpz &operator()(size_t row, size_t col) const {
+            return const_cast<fmpz&>(this->matrix[(row * this->dim) + col]);
+        }
+
+        mp_bitcnt_t getScale() const {
+            return this->scale;
         }
 
         size_t getDimension() const {
             return this->dim;
-        }
-
-        mp_bitcnt_t getPrecision() const {
-            return this->prec;
         }
 
         decltype(auto) begin() const {
@@ -62,12 +70,10 @@ namespace mpmatrix {
         //Capture the initial flags of the output stream
         std::ios::fmtflags initialFlags(os.flags());
 
-        std::cout.precision(matrix.getPrecision());
-
         size_t counter = 0;
-        for (auto &mp : matrix) {
+        for (auto &num : matrix) {
             counter++;
-            os << mp << '\t';
+            os << num << '\t';
             if (counter % matrix.getDimension() == 0) {
                 os << '\n';
             }
@@ -79,5 +85,4 @@ namespace mpmatrix {
         return os << std::endl;
     }
 
-    bool cholesky(const MpMatrix &initial, MpMatrix &lower);
 }

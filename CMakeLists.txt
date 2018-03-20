@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(hankelhacker VERSION 0.0.0)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 
 # Globals
 set(GLOBAL_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
