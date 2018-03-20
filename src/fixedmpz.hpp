@@ -2,6 +2,7 @@
 
 #include <gmpxx.h>
 #include <iostream>
+#include <string>
 
 namespace mpmatrix {
     class fixedmpz {
@@ -87,8 +88,21 @@ namespace mpmatrix {
         }
 
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
-        // friend fixedmpz sqrt(const fixedmpz &rop);
     };
+
+    inline fixedmpz operator""_fmpz(const char *literal, size_t len) {
+        std::string lit(literal, len);
+        auto loc = lit.find(',', 0);
+        if (loc != std::string::npos) {
+            mpz_class number(lit.substr(0, loc));
+            mp_bitcnt_t scale = std::stol(lit.substr(loc + 1, lit.length()));
+            number <<= scale;
+            return fixedmpz(number, scale);
+        } else {
+            mpz_class number(lit);
+            return fixedmpz(number, 0);
+        }
+    }
 
     inline fixedmpz operator+(fixedmpz lhs, const fixedmpz &rhs) {
         lhs += rhs;

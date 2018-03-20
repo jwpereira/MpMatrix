@@ -15,10 +15,10 @@ int main(int argc, char *argv[]) {
     size_t m_dim = 4;
     mp_bitcnt_t m_scale = 256;
     fixedmpz m_raw[] = {
-        fixedmpz(18_mpz << m_scale, m_scale), fixedmpz(22_mpz << m_scale, m_scale), fixedmpz( 54_mpz << m_scale, m_scale), fixedmpz( 42_mpz << m_scale, m_scale),  
-        fixedmpz(22_mpz << m_scale, m_scale), fixedmpz(70_mpz << m_scale, m_scale), fixedmpz( 86_mpz << m_scale, m_scale), fixedmpz( 62_mpz << m_scale, m_scale),
-        fixedmpz(54_mpz << m_scale, m_scale), fixedmpz(86_mpz << m_scale, m_scale), fixedmpz(174_mpz << m_scale, m_scale), fixedmpz(134_mpz << m_scale, m_scale), 
-        fixedmpz(42_mpz << m_scale, m_scale), fixedmpz(62_mpz << m_scale, m_scale), fixedmpz(134_mpz << m_scale, m_scale), fixedmpz(106_mpz << m_scale, m_scale)
+        "18,256"_fmpz, "22,256"_fmpz,  "54,256"_fmpz,  "42,256"_fmpz,  
+        "22,256"_fmpz, "70,256"_fmpz,  "86,256"_fmpz,  "62,256"_fmpz,
+        "54,256"_fmpz, "86,256"_fmpz, "174,256"_fmpz, "134,256"_fmpz, 
+        "42,256"_fmpz, "62,256"_fmpz, "134,256"_fmpz, "106,256"_fmpz
     };
 
     MpMatrix m(m_dim, m_scale, m_raw, (m_raw + (m_dim * m_dim)));
