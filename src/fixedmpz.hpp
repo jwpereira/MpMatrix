@@ -5,16 +5,18 @@
 #include <string>
 
 namespace mpmatrix {
+    using fmpz_scale = mp_bitcnt_t;
+
     class fixedmpz {
       private:
         mpz_class number;
-        mp_bitcnt_t scale;
+        fmpz_scale scale;
 
       public:
-        fixedmpz(mpz_class number, mp_bitcnt_t scale) : number(number), scale(scale) {}
+        fixedmpz(mpz_class number, fmpz_scale scale) : number(number), scale(scale) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
 
-        mp_bitcnt_t getScale() const {
+        fmpz_scale getScale() const {
             return this->scale;
         }
 
@@ -26,7 +28,7 @@ namespace mpmatrix {
             return this->number.get_mpz_t();
         }
 
-        void setScale(mp_bitcnt_t scale) {
+        void setScale(fmpz_scale scale) {
             this->scale = scale;
         }
 
@@ -77,12 +79,12 @@ namespace mpmatrix {
             return *this;
         }
 
-        fixedmpz operator>>=(const mp_bitcnt_t &amount) {
+        fixedmpz operator>>=(const fmpz_scale &amount) {
             this->number >>= amount;
             return *this;
         }
 
-        fixedmpz operator<<=(const mp_bitcnt_t &amount) {
+        fixedmpz operator<<=(const fmpz_scale &amount) {
             this->number <<= amount;
             return *this;
         }
@@ -110,12 +112,12 @@ namespace mpmatrix {
         return lhs;
     }
 
-    inline fixedmpz operator>>(fixedmpz lhs, const mp_bitcnt_t &rhs) {
+    inline fixedmpz operator>>(fixedmpz lhs, const fmpz_scale &rhs) {
         lhs >>= rhs;
         return lhs;
     }
 
-    inline fixedmpz operator<<(fixedmpz lhs, const mp_bitcnt_t &rhs) {
+    inline fixedmpz operator<<(fixedmpz lhs, const fmpz_scale &rhs) {
         lhs <<= rhs;
         return lhs;
     }
@@ -136,7 +138,7 @@ namespace mpmatrix {
 
     class fmpz_scale_t {
       public:
-        const mp_bitcnt_t scale;
+        const fmpz_scale scale;
         constexpr fmpz_scale_t(unsigned long long scale) : scale(scale) {}
     };
 

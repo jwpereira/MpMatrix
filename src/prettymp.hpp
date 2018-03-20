@@ -18,7 +18,7 @@ namespace mpmatrix {
 
     class PrecPrint : virtual public PrettyMpMatrixBase {
       private:
-        mp_bitcnt_t scale;
+        fmpz_scale scale;
         void pretty_print(std::ostream &os) const {
             //Capture the initial flags of the output stream
             std::ios::fmtflags initialFlags(os.flags());
@@ -37,7 +37,7 @@ namespace mpmatrix {
             os << std::endl;
         }
       public:
-        PrecPrint(MpMatrix &matrix, mp_bitcnt_t scale) : scale(scale),
+        PrecPrint(MpMatrix &matrix, fmpz_scale scale) : scale(scale),
             PrettyMpMatrixBase(matrix) {}
     };
 

@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     std::ios_base::sync_with_stdio(false);
 
     size_t m_dim = 4;
-    mp_bitcnt_t m_scale = 256;
+    fmpz_scale m_scale = 256;
     fixedmpz m_raw[] = {
         18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
         22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,

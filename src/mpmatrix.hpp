@@ -8,16 +8,16 @@
 #include "fixedmpz.hpp"
 
 namespace mpmatrix {
-    using mp_t = fixedmpz;
+    using fmpz = fixedmpz;
 
     class MpMatrix {
       private:
-        std::vector<mp_t> matrix;
+        std::vector<fmpz> matrix;
         size_t dim;       // dimension * dimension = size [we're working with square matricies]
         mp_bitcnt_t scale;
       public:
         MpMatrix(size_t dim, mp_bitcnt_t scale) : dim(dim), scale(scale) {
-            this->matrix = std::vector<mp_t>(dim * dim, mp_t(0, scale));
+            this->matrix = std::vector<fmpz>(dim * dim, fmpz(0, scale));
         }
 
         template <typename Iterator>
@@ -31,12 +31,12 @@ namespace mpmatrix {
             });
         }
 
-        mp_t &operator()(size_t row, size_t col) {
+        fmpz &operator()(size_t row, size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
 
-        mp_t &operator()(size_t row, size_t col) const {
-            return const_cast<mp_t&>(this->matrix[(row * this->dim) + col]);
+        fmpz &operator()(size_t row, size_t col) const {
+            return const_cast<fmpz&>(this->matrix[(row * this->dim) + col]);
         }
 
         mp_bitcnt_t getScale() const {
@@ -71,9 +71,9 @@ namespace mpmatrix {
         std::ios::fmtflags initialFlags(os.flags());
 
         size_t counter = 0;
-        for (auto &mp_t : matrix) {
+        for (auto &num : matrix) {
             counter++;
-            os << mp_t << '\t';
+            os << num << '\t';
             if (counter % matrix.getDimension() == 0) {
                 os << '\n';
             }

@@ -13,7 +13,7 @@ bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
 
     for (size_t i = 0; i < dim; i++) {
         for (size_t j = 0; j <= i; j++) {
-            mp_t sum(0, initial.getScale());
+            fmpz sum(0, initial.getScale());
             if (j == i) {
                 for (size_t k = 0; k < j; k++) {
                     sum += sq(lower(j, k));
