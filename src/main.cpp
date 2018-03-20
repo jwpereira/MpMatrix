@@ -15,10 +15,10 @@ int main(int argc, char *argv[]) {
     size_t m_dim = 4;
     mp_bitcnt_t m_scale = 256;
     fixedmpz m_raw[] = {
-        "18,256"_fmpz, "22,256"_fmpz,  "54,256"_fmpz,  "42,256"_fmpz,  
-        "22,256"_fmpz, "70,256"_fmpz,  "86,256"_fmpz,  "62,256"_fmpz,
-        "54,256"_fmpz, "86,256"_fmpz, "174,256"_fmpz, "134,256"_fmpz, 
-        "42,256"_fmpz, "62,256"_fmpz, "134,256"_fmpz, "106,256"_fmpz
+        18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
+        22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,
+        54^256_fmpz, 86^256_fmpz, 174^256_fmpz, 134^256_fmpz, 
+        42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
     MpMatrix m(m_dim, m_scale, m_raw, (m_raw + (m_dim * m_dim)));

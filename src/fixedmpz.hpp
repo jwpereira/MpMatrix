@@ -90,20 +90,6 @@ namespace mpmatrix {
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
     };
 
-    inline fixedmpz operator""_fmpz(const char *literal, size_t len) {
-        std::string lit(literal, len);
-        auto loc = lit.find(',', 0);
-        if (loc != std::string::npos) {
-            mpz_class number(lit.substr(0, loc));
-            mp_bitcnt_t scale = std::stol(lit.substr(loc + 1, lit.length()));
-            number <<= scale;
-            return fixedmpz(number, scale);
-        } else {
-            mpz_class number(lit);
-            return fixedmpz(number, 0);
-        }
-    }
-
     inline fixedmpz operator+(fixedmpz lhs, const fixedmpz &rhs) {
         lhs += rhs;
         return lhs;
@@ -146,5 +132,21 @@ namespace mpmatrix {
         fixedmpz ret = rop << rop.getScale();
         ret() = sqrt(ret());
         return ret;
+    }
+
+    class fmpz_scale_t {
+      public:
+        mp_bitcnt_t scale;
+        fmpz_scale_t(unsigned long long scale) : scale(scale) {}
+    };
+
+    inline fmpz_scale_t operator""_fmpz(unsigned long long literal) {
+        return fmpz_scale_t(literal);
+    }
+
+    inline fixedmpz operator^(unsigned long literal, fmpz_scale_t scale) {
+        mpz_class number(literal);
+        number <<= scale.scale;
+        return fixedmpz(number, scale.scale);
     }
 }
