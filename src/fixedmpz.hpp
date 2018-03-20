@@ -136,11 +136,11 @@ namespace mpmatrix {
 
     class fmpz_scale_t {
       public:
-        mp_bitcnt_t scale;
-        fmpz_scale_t(unsigned long long scale) : scale(scale) {}
+        const mp_bitcnt_t scale;
+        constexpr fmpz_scale_t(unsigned long long scale) : scale(scale) {}
     };
 
-    inline fmpz_scale_t operator""_fmpz(unsigned long long literal) {
+    constexpr inline fmpz_scale_t operator""_fmpz(unsigned long long literal) {
         return fmpz_scale_t(literal);
     }
 
