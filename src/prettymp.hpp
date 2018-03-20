@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
 
 namespace mpmatrix {
@@ -26,7 +27,8 @@ namespace mpmatrix {
             size_t counter = 0;
             for (auto &mp : matrix) {
                 counter++;
-                os << std::setprecision(scale) << std::setw(1.5 * scale) << std::setfill(' ') << std::left << mp.to_mpf() << ' ';
+                os << std::setprecision(scale) << std::setw(1.5 * scale) << std::setfill(' ') 
+                    << std::left << mp.to_mpf() << ' ';
                 if (counter % matrix.getDimension() == 0) {
                     os << '\n';
                 }
