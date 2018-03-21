@@ -4,9 +4,14 @@
 #include <iostream>
 #include <string>
 
-namespace mpmatrix {
+namespace momentmp {
     using fmpz_scale = mp_bitcnt_t;
 
+    /// mpz_class based class purposed for fixed-precision arithmetic.
+    /** 
+     * Use this to have mpz's that automatically get shifted into place.
+     * Has overloaded operators for convenience.
+     */
     class fixedmpz {
       private:
         mpz_class number;

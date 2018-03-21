@@ -7,13 +7,24 @@
 #include <vector>
 #include "fixedmpz.hpp"
 
-namespace mpmatrix {
+/// Namespace holding together all that we love
+/**
+ * Classes and functions in this namespace are particularly geared towards the needs of the 
+ * HankelHacker project. 
+ */
+namespace momentmp {
     using fmpz = fixedmpz;
 
+    /// Matrix class based class focused on containing and fmp_t elements.
+    /**
+     * MpMatrix is a square-matrix container-wrapper for fmp_t elements. It allows for individual
+     * elements in the underlying container to be accessed using a reasonable syntax 
+     * (i.e., <code>name_of_matrix(row, col)</code>).
+     */
     class MpMatrix {
       private:
-        std::vector<fmpz> matrix;
-        size_t dim;       // dimension * dimension = size [we're working with square matricies]
+        std::vector<fmp_t> matrix;
+        size_t dim;       ///< dimension * dimension = size [we're working with square matricies]
         mp_bitcnt_t scale;
       public:
         MpMatrix(size_t dim, mp_bitcnt_t scale) : dim(dim), scale(scale) {
@@ -31,12 +42,12 @@ namespace mpmatrix {
             });
         }
 
-        fmpz &operator()(size_t row, size_t col) {
+        fmp_t &operator()(const size_t row, const size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
 
-        fmpz &operator()(size_t row, size_t col) const {
-            return const_cast<fmpz&>(this->matrix[(row * this->dim) + col]);
+        fmp_t &operator()(const size_t row, const size_t col) const {
+            return const_cast<fmp_t&>(this->matrix[(row * this->dim) + col]);
         }
 
         mp_bitcnt_t getScale() const {

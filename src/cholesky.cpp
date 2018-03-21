@@ -2,9 +2,9 @@
 #include "mpmatrix.hpp"
 #include "mpm_algorithm.hpp"
 
-using namespace mpmatrix;
+using namespace momentmp;
 
-bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
+bool momentmp::cholesky(const MpMatrix &initial, MpMatrix &lower) {
     if (initial.getDimension() != lower.getDimension()) {
         return false;
     }

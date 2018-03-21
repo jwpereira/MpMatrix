@@ -2,6 +2,6 @@
 
 #include "mpmatrix.hpp"
 
-namespace mpmatrix {
+namespace momentmp {
     bool cholesky(const MpMatrix &initial, MpMatrix &lower);
 }

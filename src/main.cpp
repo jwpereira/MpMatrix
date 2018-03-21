@@ -5,7 +5,7 @@
 #include "mpmatrix.hpp"
 #include "prettymp.hpp"
 
-using namespace mpmatrix;
+using namespace momentmp;
 
 int main(int argc, char *argv[]) {
     // Not using printf, therefore no need to have cout sync with stdio ->

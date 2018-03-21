@@ -3,7 +3,7 @@
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
 
-namespace mpmatrix {
+namespace momentmp {
     class PrettyMpMatrixBase {
       protected:
         MpMatrix &matrix;
