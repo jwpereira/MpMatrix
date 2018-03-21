@@ -7,13 +7,14 @@
 #include <vector>
 #include "fixedmpz.hpp"
 
-/// Namespace holding together all that we love
+/// Namespace for the Multiple Precision Matrix Project
 /**
  * Classes and functions in this namespace are particularly geared towards the needs of the 
  * HankelHacker project. 
  */
 namespace momentmp {
-    using fmpz = fixedmpz;
+    using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
+    using fmp_scale_t = fmp_scale_t;   ///< alias to the scaling type really used for fixedmpz
 
     /// Matrix class based class focused on containing and fmp_t elements.
     /**
@@ -25,14 +26,14 @@ namespace momentmp {
       private:
         std::vector<fmp_t> matrix;
         size_t dim;       ///< dimension * dimension = size [we're working with square matricies]
-        mp_bitcnt_t scale;
+        fmp_scale_t scale;  ///< for keeping track of the scale/precision factor across the matrix
       public:
-        MpMatrix(size_t dim, mp_bitcnt_t scale) : dim(dim), scale(scale) {
-            this->matrix = std::vector<fmpz>(dim * dim, fmpz(0, scale));
+        MpMatrix(size_t dim, fmp_scale_t scale) : dim(dim), scale(scale) {
+            this->matrix = std::vector<fmp_t>(dim * dim, fmp_t(0, scale));
         }
 
         template <typename Iterator>
-        MpMatrix(size_t dim, mp_bitcnt_t scale, Iterator begin, Iterator end) : MpMatrix(dim, scale) {
+        MpMatrix(size_t dim, fmp_scale_t scale, Iterator begin, Iterator end) : MpMatrix(dim, scale) {
             //std::copy(begin, end, this->matrix.begin());
             auto iter = this->matrix.begin();
             std::for_each(begin, end, [&](auto &val) {
@@ -50,7 +51,7 @@ namespace momentmp {
             return const_cast<fmp_t&>(this->matrix[(row * this->dim) + col]);
         }
 
-        mp_bitcnt_t getScale() const {
+        fmp_scale_t getScale() const {
             return this->scale;
         }
 

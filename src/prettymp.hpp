@@ -19,7 +19,7 @@ namespace momentmp {
 
     class PrecPrint : virtual public PrettyMpMatrixBase {
       private:
-        fmpz_scale scale;
+        fmp_scale_t scale;
         void pretty_print(std::ostream &os) const {
             //Capture the initial flags of the output stream
             std::ios::fmtflags initialFlags(os.flags());
@@ -39,7 +39,7 @@ namespace momentmp {
             os << std::endl;
         }
       public:
-        PrecPrint(MpMatrix &matrix, fmpz_scale scale) : scale(scale),
+        PrecPrint(MpMatrix &matrix, fmp_scale_t scale) : scale(scale),
             PrettyMpMatrixBase(matrix) {}
     };
 

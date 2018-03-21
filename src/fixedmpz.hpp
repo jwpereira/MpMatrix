@@ -5,7 +5,11 @@
 #include <string>
 
 namespace momentmp {
-    using fmpz_scale = mp_bitcnt_t;
+    // forward declaration for the class below; allows the aliases immediately following to work.
+    class fixedmpz;
+
+    using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
+    using fmp_scale_t = mp_bitcnt_t;   ///< alias to the scaling type really used for fixedmpz
 
     /// mpz_class based class purposed for fixed-precision arithmetic.
     /** 
@@ -15,13 +19,13 @@ namespace momentmp {
     class fixedmpz {
       private:
         mpz_class number;
-        fmpz_scale scale;
+        fmp_scale_t scale;
 
       public:
-        fixedmpz(mpz_class number, fmpz_scale scale) : number(number), scale(scale) {}
+        fixedmpz(mpz_class number, fmp_scale_t scale) : number(number), scale(scale) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
 
-        fmpz_scale getScale() const {
+        fmp_scale_t getScale() const {
             return this->scale;
         }
 
@@ -33,7 +37,7 @@ namespace momentmp {
             return this->number.get_mpz_t();
         }
 
-        void setScale(fmpz_scale scale) {
+        void setScale(fmp_scale_t scale) {
             this->scale = scale;
         }
 
@@ -84,17 +88,17 @@ namespace momentmp {
             return *this;
         }
 
-        fixedmpz operator>>=(const fmpz_scale &amount) {
+        fixedmpz operator>>=(const fmp_scale_t &amount) {
             this->number >>= amount;
             return *this;
         }
 
-        fixedmpz operator<<=(const fmpz_scale &amount) {
+        fixedmpz operator<<=(const fmp_scale_t &amount) {
             this->number <<= amount;
             return *this;
         }
 
-        friend std::ostream &operator<<(std::ostream &os, const fixedmpz fmp);
+        friend std::ostream &operator<<(std::ostream &os, const fixedmpz &fmp);
     };
 
     inline fixedmpz operator+(fixedmpz lhs, const fixedmpz &rhs) {
@@ -117,17 +121,17 @@ namespace momentmp {
         return lhs;
     }
 
-    inline fixedmpz operator>>(fixedmpz lhs, const fmpz_scale &rhs) {
+    inline fixedmpz operator>>(fixedmpz lhs, const fmp_scale_t &rhs) {
         lhs >>= rhs;
         return lhs;
     }
 
-    inline fixedmpz operator<<(fixedmpz lhs, const fmpz_scale &rhs) {
+    inline fixedmpz operator<<(fixedmpz lhs, const fmp_scale_t &rhs) {
         lhs <<= rhs;
         return lhs;
     }
 
-    inline std::ostream &operator<<(std::ostream &os, const fixedmpz fmp) {
+    inline std::ostream &operator<<(std::ostream &os, const fixedmpz &fmp) {
         return os << fmp.to_mpf();
     }
 
@@ -141,17 +145,17 @@ namespace momentmp {
         return ret;
     }
 
-    class fmpz_scale_t {
+    class fmpz_adapter {
       public:
-        const fmpz_scale scale;
-        constexpr fmpz_scale_t(unsigned long long scale) : scale(scale) {}
+        const fmp_scale_t scale;
+        constexpr fmpz_adapter(unsigned long long scale) : scale(scale) {}
     };
 
-    constexpr inline fmpz_scale_t operator""_fmpz(unsigned long long literal) {
-        return fmpz_scale_t(literal);
+    constexpr inline fmpz_adapter operator""_fmpz(unsigned long long literal) {
+        return fmpz_adapter(literal);
     }
 
-    inline fixedmpz operator^(unsigned long literal, fmpz_scale_t scale) {
+    inline fixedmpz operator^(unsigned long literal, fmpz_adapter scale) {
         mpz_class number(literal);
         number <<= scale.scale;
         return fixedmpz(number, scale.scale);
