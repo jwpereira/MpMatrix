@@ -30,10 +30,27 @@ namespace momentmp {
         size_t dim;       ///< dimension * dimension = size [we're working with square matricies]
         fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
       public:
+        /**
+         * @brief Construct a new MpMatrix object
+         * 
+         * @param dim Size of the matrix (n for an n*n matrix)
+         * @param shift Amount each of the elements are. Per \link fixedmpz \endlink
+         */
         MpMatrix(size_t dim, fmp_shift_t shift) : dim(dim), shift(shift) {
             this->matrix = std::vector<fmp_t>(dim * dim, fmp_t(0, shift));
         }
 
+        /**
+         * @brief Construct a new MpMatrix object
+         * 
+         * Consider this like a copy constructor using Iterators (so as to allow loading data
+         * into MpMatrix from other containers/means).
+         * 
+         * @param dim Size of the matrix (n for an n*n matrix)
+         * @param shift Amount each of the elements are. Per \link fixedmpz \endlink
+         * @param begin Iterator from where copying starts
+         * @param end Iterator from where copying ends
+         */
         template <typename Iterator>
         MpMatrix(size_t dim, fmp_shift_t shift, Iterator begin, Iterator end) : MpMatrix(dim, shift) {
             //std::copy(begin, end, this->matrix.begin());
@@ -45,34 +62,79 @@ namespace momentmp {
             });
         }
 
+        /**
+         * @brief Returns a reference to the fmp_t element at position (row, col).
+         * 
+         * Operator overload for () allows for easy access to elements inside the matrix using 
+         * an intuitive syntax that is close to MpMatrix[row][col].
+         * 
+         * @param row The row where the element is located.
+         * @param col The column where the element is located. 
+         * @return fmp_t& The address of the element at position (row, col).
+         */
         fmp_t &operator()(const size_t row, const size_t col) {
             return this->matrix[(row * this->dim) + col];
         }
-
+        
+        /**
+         * @brief This is a const version of <code>&operator()</code>
+         */
         fmp_t &operator()(const size_t row, const size_t col) const {
             return const_cast<fmp_t&>(this->matrix[(row * this->dim) + col]);
         }
 
+        /**
+         * @brief Get the amount the fmp_t elements are shifted by
+         * 
+         * @return The shift amount.
+         */
         fmp_shift_t getShift() const {
             return this->shift;
         }
 
+        /**
+         * @brief Get the n-dimension of the matrix
+         * 
+         * For an n*n square matrix (for which \link MpMatrix \endlink represents), this returns n.
+         * 
+         * @return size_t n-dimension
+         */
         size_t getDimension() const {
             return this->dim;
         }
 
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) begin() const {
             return this->matrix.begin();
         }
 
+        /**
+         * @brief Returns a constant begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) cbegin() const {
             return this->matrix.cbegin();
         }
 
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) end() const {
             return this->matrix.end();
         }
 
+        /**
+         * @brief Returns a constant end() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) cend() const {
             return this->matrix.cend();
         }
@@ -80,6 +142,15 @@ namespace momentmp {
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
 
+    /**
+     * @brief Basic overload for the << operator to allow simple formatted-output to std::ostream
+     * 
+     * Example usage for \link MpMatrix \endlink named <code>matrix</code>:
+     * <code>std::cout << matrix;</code>
+     * 
+     * <strong>Note:</strong> As of now this <strong>does not</strong> set the precision of the 
+     * outputted numbers! This means that rounded results may be printed instead!
+     */
     inline std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix) {        
         //Capture the initial flags of the output stream
         std::ios::fmtflags initialFlags(os.flags());
