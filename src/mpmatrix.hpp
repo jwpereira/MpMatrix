@@ -7,8 +7,9 @@
 #include <vector>
 #include "fixedmpz.hpp"
 
-/// Namespace for the Multiple Precision Matrix Project
 /**
+ * @brief Namespace for the Multiple Precision Matrix Project
+ * 
  * Classes and functions in this namespace are particularly geared towards the needs of the 
  * HankelHacker project. 
  */
@@ -16,8 +17,9 @@ namespace momentmp {
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
     using fmp_shift_t = fmp_shift_t;   ///< alias to the scaling type really used for fixedmpz
 
-    /// Matrix class based class focused on containing and fmp_t elements.
     /**
+     * @brief Matrix class based class focused on containing and fmp_t elements.
+     * 
      * MpMatrix is a square-matrix container-wrapper for fmp_t elements. It allows for individual
      * elements in the underlying container to be accessed using a reasonable syntax 
      * (i.e., <code>name_of_matrix(row, col)</code>).

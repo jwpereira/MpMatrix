@@ -9,12 +9,13 @@ namespace momentmp {
     class fixedmpz;
 
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
-    
-    /// Alias for fixedmpz's underlying type representing the where the "dot" goes (in base 2)
+
+    /** Alias for fixedmpz's underlying type representing the where the "dot" goes (in base 2) */
     using fmp_shift_t = mp_bitcnt_t;
 
-    /// mpz_class based class purposed for fixed-precision arithmetic.
-    /** 
+    /**
+     * @brief mpz_class based class purposed for fixed-precision arithmetic.
+     * 
      * Use this to have mpz's that automatically get shifted into place.
      * Has overloaded operators for convenience. This class essentially wraps GMP's mpz_class,
      * allowing it to be used for fixed point arithmetic. 
@@ -148,7 +149,14 @@ namespace momentmp {
         ret() = sqrt(ret());
         return ret;
     }
-
+    
+    /**
+     * @brief Utility class designed purely to make the _fmpz literal operator happen
+     *
+     * This class really should not be used for anything as it is just made to allow
+     * <code>_fmpz</code> to work. What it is actually doing is serving as a wrapping type for \link
+     * fmp_shift_t \endlink. The <code>_fmpz</code> suffix turns an unsigned long
+     */
     class fmpz_adapter {
       public:
         const fmp_shift_t shift;
