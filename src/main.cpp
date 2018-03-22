@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gmpxx.h>
 #include "fixedmpz.hpp"
-#include "mpm_algorithm.hpp"
+#include "mpmatrix_algorithm.hpp"
 #include "mpmatrix.hpp"
 #include "prettymp.hpp"
 

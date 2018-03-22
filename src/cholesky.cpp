@@ -1,6 +1,6 @@
 #include <gmpxx.h>
 #include "mpmatrix.hpp"
-#include "mpm_algorithm.hpp"
+#include "mpmatrix_algorithm.hpp"
 
 using namespace momentmp;
 using momentmp::MpMatrix;
