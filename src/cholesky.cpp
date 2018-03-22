@@ -4,8 +4,10 @@
 
 using namespace momentmp;
 using momentmp::MpMatrix;
-
-
+/**
+ * This function takes in an initial matrix and outputs the lower triangular matrix that is the
+ * result of a Cholesky decomposition on it. 
+ */
 bool momentmp::cholesky(const MpMatrix &initial, MpMatrix &lower) {
     if (initial.getDimension() != lower.getDimension()) {
         return false;
