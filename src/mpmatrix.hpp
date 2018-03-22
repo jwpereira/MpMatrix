@@ -19,10 +19,10 @@ namespace momentmp {
 
     /**
      * @brief Matrix class based class focused on containing and fmp_t elements.
-     * 
+     *
      * MpMatrix is a square-matrix container-wrapper for fmp_t elements. It allows for individual
-     * elements in the underlying container to be accessed using a reasonable syntax 
-     * (i.e., <code>name_of_matrix(row, col)</code>).
+     * elements in the underlying container to be accessed using a reasonable syntax (i.e.,
+     * <code>name_of_matrix(row, col)</code>).
      */
     class MpMatrix {
       private:
@@ -42,10 +42,12 @@ namespace momentmp {
 
         /**
          * @brief Construct a new MpMatrix object
-         * 
-         * Consider this like a copy constructor using Iterators (so as to allow loading data
-         * into MpMatrix from other containers/means).
-         * 
+         *
+         * Consider this like a copy constructor using Iterators (so as to allow loading data into
+         * MpMatrix from other containers/means). For example: for testing purposes, one could make
+         * a raw array of \link fixedmpz \endlink objects (such that the array is of an n*n square
+         * matrix) and have an MpMatrix object be created from that. 
+         *
          * @param dim Size of the matrix (n for an n*n matrix)
          * @param shift Amount each of the elements are. Per \link fixedmpz \endlink
          * @param begin Iterator from where copying starts
