@@ -19,7 +19,7 @@ namespace momentmp {
 
     class PrecPrint : virtual public PrettyMpMatrixBase {
       private:
-        fmp_scale_t scale;
+        fmp_shift_t shift;
         void pretty_print(std::ostream &os) const {
             //Capture the initial flags of the output stream
             std::ios::fmtflags initialFlags(os.flags());
@@ -27,7 +27,7 @@ namespace momentmp {
             size_t counter = 0;
             for (auto &mp : matrix) {
                 counter++;
-                os << std::setprecision(scale) << std::setw(1.5 * scale) << std::setfill(' ') 
+                os << std::setprecision(shift) << std::setw(1.5 * shift) << std::setfill(' ') 
                     << std::left << mp.to_mpf() << ' ';
                 if (counter % matrix.getDimension() == 0) {
                     os << '\n';
@@ -39,7 +39,7 @@ namespace momentmp {
             os << std::endl;
         }
       public:
-        PrecPrint(MpMatrix &matrix, fmp_scale_t scale) : scale(scale),
+        PrecPrint(MpMatrix &matrix, fmp_shift_t shift) : shift(shift),
             PrettyMpMatrixBase(matrix) {}
     };
 

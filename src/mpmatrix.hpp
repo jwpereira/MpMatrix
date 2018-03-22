@@ -14,7 +14,7 @@
  */
 namespace momentmp {
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
-    using fmp_scale_t = fmp_scale_t;   ///< alias to the scaling type really used for fixedmpz
+    using fmp_shift_t = fmp_shift_t;   ///< alias to the scaling type really used for fixedmpz
 
     /// Matrix class based class focused on containing and fmp_t elements.
     /**
@@ -26,19 +26,19 @@ namespace momentmp {
       private:
         std::vector<fmp_t> matrix;
         size_t dim;       ///< dimension * dimension = size [we're working with square matricies]
-        fmp_scale_t scale;  ///< for keeping track of the scale/precision factor across the matrix
+        fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
       public:
-        MpMatrix(size_t dim, fmp_scale_t scale) : dim(dim), scale(scale) {
-            this->matrix = std::vector<fmp_t>(dim * dim, fmp_t(0, scale));
+        MpMatrix(size_t dim, fmp_shift_t shift) : dim(dim), shift(shift) {
+            this->matrix = std::vector<fmp_t>(dim * dim, fmp_t(0, shift));
         }
 
         template <typename Iterator>
-        MpMatrix(size_t dim, fmp_scale_t scale, Iterator begin, Iterator end) : MpMatrix(dim, scale) {
+        MpMatrix(size_t dim, fmp_shift_t shift, Iterator begin, Iterator end) : MpMatrix(dim, shift) {
             //std::copy(begin, end, this->matrix.begin());
             auto iter = this->matrix.begin();
             std::for_each(begin, end, [&](auto &val) {
                 iter->setNumber(val);
-                iter->setScale(val.getScale());
+                iter->setshift(val.getShift());
                 iter++;
             });
         }
@@ -51,8 +51,8 @@ namespace momentmp {
             return const_cast<fmp_t&>(this->matrix[(row * this->dim) + col]);
         }
 
-        fmp_scale_t getScale() const {
-            return this->scale;
+        fmp_shift_t getShift() const {
+            return this->shift;
         }
 
         size_t getDimension() const {

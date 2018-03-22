@@ -9,24 +9,28 @@ namespace momentmp {
     class fixedmpz;
 
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
-    using fmp_scale_t = mp_bitcnt_t;   ///< alias to the scaling type really used for fixedmpz
+    
+    /// Alias for fixedmpz's underlying type representing the where the "dot" goes (in base 2)
+    using fmp_shift_t = mp_bitcnt_t;
 
     /// mpz_class based class purposed for fixed-precision arithmetic.
     /** 
      * Use this to have mpz's that automatically get shifted into place.
-     * Has overloaded operators for convenience.
+     * Has overloaded operators for convenience. This class essentially wraps GMP's mpz_class,
+     * allowing it to be used for fixed point arithmetic. 
      */
     class fixedmpz {
       private:
         mpz_class number;
-        fmp_scale_t scale;
+        fmp_shift_t shift;
 
       public:
-        fixedmpz(mpz_class number, fmp_scale_t scale) : number(number), scale(scale) {}
+        fixedmpz(mpz_class number, fmp_shift_t shift) : number(number), shift(shift) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
 
-        fmp_scale_t getScale() const {
-            return this->scale;
+        /// Returns how much the the underlying mpz_class is shifted by
+        fmp_shift_t getShift() const {
+            return this->shift;
         }
 
         decltype(auto) get_mpz_t() {
@@ -37,8 +41,8 @@ namespace momentmp {
             return this->number.get_mpz_t();
         }
 
-        void setScale(fmp_scale_t scale) {
-            this->scale = scale;
+        void setshift(fmp_shift_t shift) {
+            this->shift = shift;
         }
 
         void setNumber(mpz_class number) {
@@ -46,11 +50,11 @@ namespace momentmp {
         }
 
         mpf_class to_mpf() const {
-            mpf_class scaled(0, this->scale);
-            mpf_set_z(scaled.get_mpf_t(), this->get_mpz_t());
-            scaled >>= this->scale;
+            mpf_class shiftd(0, this->shift);
+            mpf_set_z(shiftd.get_mpf_t(), this->get_mpz_t());
+            shiftd >>= this->shift;
 
-            return scaled;
+            return shiftd;
         }
 
         mpz_class &operator()() {
@@ -76,24 +80,24 @@ namespace momentmp {
         }
 
         fixedmpz operator*=(const fixedmpz &multiplicand) {
-            this->number >>= (this->scale / 2);
-            this->number *= (multiplicand.number >> multiplicand.scale / 2);
+            this->number >>= (this->shift / 2);
+            this->number *= (multiplicand.number >> multiplicand.shift / 2);
 
             return *this;
         }
 
         fixedmpz operator/=(const fixedmpz &divisor) {
-            this->number <<= this->scale;
+            this->number <<= this->shift;
             this->number /= divisor.number;
             return *this;
         }
 
-        fixedmpz operator>>=(const fmp_scale_t &amount) {
+        fixedmpz operator>>=(const fmp_shift_t &amount) {
             this->number >>= amount;
             return *this;
         }
 
-        fixedmpz operator<<=(const fmp_scale_t &amount) {
+        fixedmpz operator<<=(const fmp_shift_t &amount) {
             this->number <<= amount;
             return *this;
         }
@@ -121,12 +125,12 @@ namespace momentmp {
         return lhs;
     }
 
-    inline fixedmpz operator>>(fixedmpz lhs, const fmp_scale_t &rhs) {
+    inline fixedmpz operator>>(fixedmpz lhs, const fmp_shift_t &rhs) {
         lhs >>= rhs;
         return lhs;
     }
 
-    inline fixedmpz operator<<(fixedmpz lhs, const fmp_scale_t &rhs) {
+    inline fixedmpz operator<<(fixedmpz lhs, const fmp_shift_t &rhs) {
         lhs <<= rhs;
         return lhs;
     }
@@ -140,24 +144,24 @@ namespace momentmp {
     }
 
     inline fixedmpz sqrt(const fixedmpz &rop) {
-        fixedmpz ret = rop << rop.getScale();
+        fixedmpz ret = rop << rop.getShift();
         ret() = sqrt(ret());
         return ret;
     }
 
     class fmpz_adapter {
       public:
-        const fmp_scale_t scale;
-        constexpr fmpz_adapter(unsigned long long scale) : scale(scale) {}
+        const fmp_shift_t shift;
+        constexpr fmpz_adapter(unsigned long long shift) : shift(shift) {}
     };
 
     constexpr inline fmpz_adapter operator""_fmpz(unsigned long long literal) {
         return fmpz_adapter(literal);
     }
 
-    inline fixedmpz operator^(unsigned long literal, fmpz_adapter scale) {
+    inline fixedmpz operator^(unsigned long literal, fmpz_adapter shift) {
         mpz_class number(literal);
-        number <<= scale.scale;
-        return fixedmpz(number, scale.scale);
+        number <<= shift.shift;
+        return fixedmpz(number, shift.shift);
     }
 }

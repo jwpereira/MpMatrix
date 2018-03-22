@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     std::ios_base::sync_with_stdio(false);
 
     size_t m_dim = 4;
-    fmp_scale_t m_scale = 256;
+    fmp_shift_t m_shift = 256;
     fixedmpz m_raw[] = {
         18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
         22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,
@@ -21,12 +21,12 @@ int main(int argc, char *argv[]) {
         42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
-    MpMatrix m(m_dim, m_scale, m_raw, (m_raw + (m_dim * m_dim)));
+    MpMatrix m(m_dim, m_shift, m_raw, (m_raw + (m_dim * m_dim)));
 
     std::cout << "Before:\n";
     std::cout << m << std::endl;
 
-    MpMatrix m_cholesky(m_dim, m_scale);
+    MpMatrix m_cholesky(m_dim, m_shift);
 
     if (cholesky(m, m_cholesky)) {
         std::cout << "After:\n";
