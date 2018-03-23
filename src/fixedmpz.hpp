@@ -34,10 +34,16 @@ namespace momentmp {
             return this->shift;
         }
 
+        /**
+         * @brief Internal mpz_class's get_mpz_t()
+         */
         decltype(auto) get_mpz_t() {
             return this->number.get_mpz_t();
         }
 
+        /**
+         * @brief Internal mpz_class's get_mpz_t()
+         */
         decltype(auto) get_mpz_t() const {
             return this->number.get_mpz_t();
         }
@@ -50,6 +56,9 @@ namespace momentmp {
             this->number = number;
         }
 
+        /**
+         * @brief Returns floating point representation as mpf_class
+         */
         mpf_class to_mpf() const {
             mpf_class shiftd(0, this->shift);
             mpf_set_z(shiftd.get_mpf_t(), this->get_mpz_t());
@@ -58,14 +67,25 @@ namespace momentmp {
             return shiftd;
         }
 
+        /**
+         * @brief Return underlying mpz_class
+         */
         mpz_class &operator()() {
             return this->number;
         }
 
+        /**
+         * @brief Return underlying mpz_class
+         */
         mpz_class &operator()() const {
             return const_cast<mpz_class&>(this->number);
         }
 
+        /**
+         * @brief Allows this object to be cast to mpz_class
+         * 
+         * Returns internal mpz_class
+         */
         operator mpz_class() {
             return this->number;
         }
@@ -140,12 +160,24 @@ namespace momentmp {
         return os << fmp.to_mpf();
     }
 
+    /**
+     * @brief Returns the square of a fixedmpz number in fixedmpz format
+     * 
+     * Performs the squaring by multiplying input * input.
+     * 
+     * @param[in] op fixedmpz number to be squared.
+     */
     inline fixedmpz sq(const fixedmpz &op) {
         return op * op;
     }
 
-    inline fixedmpz sqrt(const fixedmpz &rop) {
-        fixedmpz ret = rop << rop.getShift();
+    /**
+     * @brief Returns the square root of a fixedmpz number in fixedmpz format
+     * 
+     * @param[in] op fixedmpz number to take the square root of.
+     */
+    inline fixedmpz sqrt(const fixedmpz &op) {
+        fixedmpz ret = op << op.getShift();
         ret() = sqrt(ret());
         return ret;
     }
