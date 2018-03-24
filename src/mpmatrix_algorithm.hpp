@@ -5,8 +5,31 @@
 
 namespace momentmp {
 
-    inline bool generate(MpMatrix &dest, std::function<fixedmpz(size_t, size_t)> generator) {
-        return false;
+    /**
+     * @brief Function wrapper alias for the \link apply \endlink function
+     * 
+     * functions that can be assigned to applicator_f have signatures similar to:
+     * <code>function(\link fmp_t \endlink&, size_t row, size_t col)</code>
+     */
+    using applicator_f = std::function<bool(fmp_t&, size_t, size_t)>;
+
+    /**
+     * @brief Applies a function (with specific arguments) at every row,col in an mpmatrix.
+     *
+     * The function to be applied must have a signature similar to : function(\link fmp_t \endlink&,
+     * size_t row, size_t col). This means that it takes in an element of the destination matrix by
+     * reference 
+     *
+     */
+    inline bool apply(MpMatrix &dest, const applicator_f generator) {
+        const size_t dim = dest.getDimension();
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                bool result = generator(dest(i, j), i, j);
+            }
+        }
+
+        return true;
     }
 
     /**

@@ -7,6 +7,12 @@
 
 using namespace momentmp;
 
+bool sample_gen_ij(fmp_t &dest, size_t i, size_t j) {
+    auto shift = fmpshift(dest.getShift());
+    dest = ((i+1)^shift) / ((j+1)^shift);
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     // Not using printf, therefore no need to have cout sync with stdio ->
     // better performance
@@ -37,6 +43,20 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Debug:\n";
     std::cout << PrecPrint(m_cholesky, (64 >> 2));
+
+    MpMatrix m_i_over_j(m_dim, m_shift);
+    apply(m_i_over_j, sample_gen_ij);
+
+    std::cout << PrecPrint(m_i_over_j, 12);   
+
+    MpMatrix m_i_plus_j(m_dim, m_shift);
+    apply(m_i_plus_j, [](auto &fmp, auto i, auto j) {
+        auto shift = fmpshift(fmp.getShift());
+        fmp = (i^shift) + (j^shift);
+        return true;
+    }); 
+
+    std::cout << PrecPrint(m_i_plus_j, 12); 
 
     return 0;
 }

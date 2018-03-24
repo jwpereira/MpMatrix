@@ -204,4 +204,8 @@ namespace momentmp {
         number <<= shift.shift;
         return fixedmpz(number, shift.shift);
     }
+
+    inline fmpz_adapter fmpshift(unsigned long shift) {
+        return fmpz_adapter(shift);
+    }
 }
