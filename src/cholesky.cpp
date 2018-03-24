@@ -1,10 +1,14 @@
 #include <gmpxx.h>
 #include "mpmatrix.hpp"
-#include "mpm_algorithm.hpp"
+#include "mpmatrix_algorithm.hpp"
 
-using namespace mpmatrix;
+using namespace momentmp;
 
-bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
+/**
+ * This function takes in an initial matrix and outputs the lower triangular matrix that is the
+ * result of a Cholesky decomposition on it. 
+ */
+bool momentmp::cholesky(const MpMatrix &initial, MpMatrix &lower) {
     if (initial.getDimension() != lower.getDimension()) {
         return false;
     }
@@ -13,7 +17,7 @@ bool mpmatrix::cholesky(const MpMatrix &initial, MpMatrix &lower) {
 
     for (size_t i = 0; i < dim; i++) {
         for (size_t j = 0; j <= i; j++) {
-            fmpz sum(0, initial.getScale());
+            fmp_t sum(0, initial.getShift());
             if (j == i) {
                 for (size_t k = 0; k < j; k++) {
                     sum += sq(lower(j, k));
