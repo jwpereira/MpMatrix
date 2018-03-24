@@ -3,7 +3,7 @@
 #include "mpmatrix_algorithm.hpp"
 
 using namespace momentmp;
-using momentmp::MpMatrix;
+
 /**
  * This function takes in an initial matrix and outputs the lower triangular matrix that is the
  * result of a Cholesky decomposition on it. 
