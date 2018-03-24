@@ -1,8 +1,14 @@
 #pragma once 
 
+#include <functional>
 #include "mpmatrix.hpp"
 
 namespace momentmp {
+
+    inline bool generate(MpMatrix &dest, std::function<fixedmpz(size_t, size_t)> generator) {
+        return false;
+    }
+
     /**
      * @brief Cholesky decomposition for MpMatrix
      * 
