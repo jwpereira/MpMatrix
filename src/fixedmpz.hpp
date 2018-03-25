@@ -90,6 +90,8 @@ namespace momentmp {
             return this->number;
         }
 
+        fixedmpz &operator=(const fixedmpz &other) = default;
+
         fixedmpz &operator+=(const fixedmpz &addend) {
             this->number += addend.number;
             return *this;

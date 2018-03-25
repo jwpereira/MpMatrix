@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -110,6 +111,15 @@ namespace momentmp {
          * 
          * @return decltype(auto) 
          */
+        decltype(auto) begin() {
+            return this->matrix.begin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) begin() const {
             return this->matrix.begin();
         }
@@ -121,6 +131,15 @@ namespace momentmp {
          */
         decltype(auto) cbegin() const {
             return this->matrix.cbegin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() {
+            return this->matrix.end();
         }
 
         /**
@@ -141,8 +160,23 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
+        MpMatrix &operator+=(const MpMatrix &addend) {
+            if (addend.dim != this->dim) {
+                throw std::runtime_error("Unable to add together matricies of different dimensions");
+            }
+            
+            std::transform(this->begin(), this->end(), addend.cbegin(), this->begin(), std::plus<fmp_t>());
+
+            return *this;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
+
+    inline MpMatrix operator+(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs += rhs;
+        return lhs;
+    }
 
     /**
      * @brief Basic overload for the << operator to allow simple formatted-output to std::ostream
