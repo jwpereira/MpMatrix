@@ -32,6 +32,13 @@ namespace momentmp {
         return true;
     }
 
+    inline applicator_f identity = [](auto &fmp, auto row, auto col) {
+        if (row == col) {
+            fmp = (1^fmpshift(fmp.getShift()));
+        }
+        return true;
+    };
+
     /**
      * @brief Cholesky decomposition for MpMatrix
      * 
