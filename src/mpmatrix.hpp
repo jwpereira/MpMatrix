@@ -171,5 +171,4 @@ namespace momentmp {
 
         return os << std::endl;
     }
-
 }
