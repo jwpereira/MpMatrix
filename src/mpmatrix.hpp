@@ -208,6 +208,17 @@ namespace momentmp {
         return lhs;
     }
 
+    inline MpMatrix operator-(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs -= rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator*(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs *= rhs;
+        return lhs;
+    }
+
+
     /**
      * @brief Basic overload for the << operator to allow simple formatted-output to std::ostream
      * 
