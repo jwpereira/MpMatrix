@@ -170,6 +170,37 @@ namespace momentmp {
             return *this;
         }
 
+        MpMatrix &operator-=(const MpMatrix &subtrahend) {
+            if (subtrahend.dim != this->dim) {
+                throw std::runtime_error("Unable to subtract matricies of different dimensions");
+            }
+            
+            std::transform(this->begin(), this->end(), subtrahend.cbegin(), this->begin(), std::minus<fmp_t>());
+
+            return *this;
+        }
+
+        MpMatrix &operator*=(const MpMatrix &multiplicand) {
+            if (multiplicand.dim != this->dim) {
+                throw std::runtime_error("MpMatrix multiplication requires same dimensions");
+            }
+            
+            auto dim = this->dim;
+            auto prec = this->shift;
+            MpMatrix &multiplier = *this;
+
+            for (size_t i = 0; i < dim; i++) {
+                for (size_t j = 0; j < dim; j++) {
+                    multiplier(i, j) = fmp_t(0, shift);
+                    for (size_t k = 0; k < dim; k++) {
+                        multiplier(i, j) += multiplier(i, k) * multiplicand(k, j);
+                    }
+                }
+            }
+
+            return *this;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
 
