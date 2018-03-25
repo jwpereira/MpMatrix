@@ -185,19 +185,18 @@ namespace momentmp {
                 throw std::runtime_error("MpMatrix multiplication requires same dimensions");
             }
             
-            auto dim = this->dim;
-            auto prec = this->shift;
             MpMatrix &multiplier = *this;
+            MpMatrix ret(this->dim, this->shift);
 
             for (size_t i = 0; i < dim; i++) {
                 for (size_t j = 0; j < dim; j++) {
-                    multiplier(i, j) = fmp_t(0, shift);
                     for (size_t k = 0; k < dim; k++) {
-                        multiplier(i, j) += multiplier(i, k) * multiplicand(k, j);
+                        ret(i, j) += multiplier(i, k) * multiplicand(k, j);
                     }
                 }
             }
 
+            *this = ret;
             return *this;
         }
 
