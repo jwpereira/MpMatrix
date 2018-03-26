@@ -170,12 +170,28 @@ namespace momentmp {
             return *this;
         }
 
+        MpMatrix &operator+=(const fmp_t &addend) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp += addend;
+            });
+
+            return *this;
+        }
+
         MpMatrix &operator-=(const MpMatrix &subtrahend) {
             if (subtrahend.dim != this->dim) {
                 throw std::runtime_error("Unable to subtract matricies of different dimensions");
             }
             
             std::transform(this->begin(), this->end(), subtrahend.cbegin(), this->begin(), std::minus<fmp_t>());
+
+            return *this;
+        }
+
+        MpMatrix &operator-=(const fmp_t &subtrahend) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp -= subtrahend;
+            });
 
             return *this;
         }
@@ -200,10 +216,23 @@ namespace momentmp {
             return *this;
         }
 
+        MpMatrix &operator*=(const fmp_t &multiplicand) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp *= multiplicand;
+            });
+
+            return *this;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
 
     inline MpMatrix operator+(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs += rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator+(MpMatrix &lhs, const fmp_t &rhs) {
         lhs += rhs;
         return lhs;
     }
@@ -213,7 +242,17 @@ namespace momentmp {
         return lhs;
     }
 
+    inline MpMatrix operator-(MpMatrix &lhs, const fmp_t &rhs) {
+        lhs -= rhs;
+        return lhs;
+    }
+
     inline MpMatrix operator*(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs *= rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator*(MpMatrix &lhs, const fmp_t &rhs) {
         lhs *= rhs;
         return lhs;
     }
