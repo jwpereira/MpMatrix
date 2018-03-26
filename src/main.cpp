@@ -56,7 +56,23 @@ int main(int argc, char *argv[]) {
         return true;
     }); 
 
+    MpMatrix m_i_plus_j_1 = m_i_plus_j;
+    m_i_plus_j_1 += m_i_plus_j;
+
     std::cout << PrecPrint(m_i_plus_j, 12); 
+    std::cout << PrecPrint(m_i_plus_j_1, 12); 
+
+    MpMatrix i4(m_dim, m_shift);
+    apply(i4, identity);
+
+    auto also_miplusj = m_i_plus_j * i4;
+    std::cout << also_miplusj << std::endl;
+    std::cout << "m + 10\n";
+    std::cout << (m + (10^fmpshift(m_shift)));
+    std::cout << "m - 10\n";
+    std::cout << (m - (10^fmpshift(m_shift)));
+    std::cout << "m * 10\n";
+    std::cout << (m * (10^fmpshift(m_shift)));
 
     return 0;
 }
