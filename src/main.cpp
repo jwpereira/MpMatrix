@@ -67,6 +67,8 @@ int main(int argc, char *argv[]) {
 
     auto also_miplusj = m_i_plus_j * i4;
     std::cout << also_miplusj << std::endl;
+    std::cout << "m\n";
+    std::cout << m;
     std::cout << "m + 10\n";
     std::cout << (m + (10^fmpshift(m_shift)));
     std::cout << "m - 10\n";

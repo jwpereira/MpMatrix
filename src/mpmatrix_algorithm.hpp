@@ -32,9 +32,14 @@ namespace momentmp {
         return true;
     }
 
+    /**
+     * @brief Applicator functor that turns an \link MpMatrix \endlink into an identity matrix
+     */
     inline applicator_f identity = [](auto &fmp, auto row, auto col) {
         if (row == col) {
             fmp = (1^fmpshift(fmp.getShift()));
+        } else {
+            fmp = (0^fmpshift(fmp.getShift()));
         }
         return true;
     };
