@@ -22,7 +22,6 @@ namespace momentmp {
         for (size_t i = 0; i < dim; i++) {
             for (size_t j = 0; j < dim; j++) {
                 dest(j, i) = src(i, j);
-                std::cout << src(i,j) << "->" << dest(j, i) << std::endl;
             }
         }
 
