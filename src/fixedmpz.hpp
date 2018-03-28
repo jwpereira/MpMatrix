@@ -90,35 +90,37 @@ namespace momentmp {
             return this->number;
         }
 
-        fixedmpz operator+=(const fixedmpz &addend) {
+        fixedmpz &operator=(const fixedmpz &other) = default;
+
+        fixedmpz &operator+=(const fixedmpz &addend) {
             this->number += addend.number;
             return *this;
         }
 
-        fixedmpz operator-=(const fixedmpz &subtrahend) {
+        fixedmpz &operator-=(const fixedmpz &subtrahend) {
             this->number -= subtrahend.number;
             return *this;
         }
 
-        fixedmpz operator*=(const fixedmpz &multiplicand) {
+        fixedmpz &operator*=(const fixedmpz &multiplicand) {
             this->number >>= (this->shift / 2);
             this->number *= (multiplicand.number >> multiplicand.shift / 2);
 
             return *this;
         }
 
-        fixedmpz operator/=(const fixedmpz &divisor) {
+        fixedmpz &operator/=(const fixedmpz &divisor) {
             this->number <<= this->shift;
             this->number /= divisor.number;
             return *this;
         }
 
-        fixedmpz operator>>=(const fmp_shift_t &amount) {
+        fixedmpz &operator>>=(const fmp_shift_t &amount) {
             this->number >>= amount;
             return *this;
         }
 
-        fixedmpz operator<<=(const fmp_shift_t &amount) {
+        fixedmpz &operator<<=(const fmp_shift_t &amount) {
             this->number <<= amount;
             return *this;
         }

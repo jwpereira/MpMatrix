@@ -6,6 +6,30 @@
 namespace momentmp {
 
     /**
+     * @brief Conjugate transpose a matrix
+     * 
+     * TODO: Look into more efficient methods of transposing matricies
+     * 
+     * @param[in] initial source matrix
+     * @param[out] lower destination matrix
+     */
+    inline bool transpose(const MpMatrix &src, MpMatrix &dest) {
+        if (src.getDimension() != dest.getDimension()) {
+            throw std::runtime_error("Unable to transpose square matrix to different size matrix");
+        }
+        
+        auto dim = src.getDimension();
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                dest(j, i) = src(i, j);
+                std::cout << src(i,j) << "->" << dest(j, i) << std::endl;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @brief Function wrapper alias for the \link apply \endlink function
      * 
      * functions that can be assigned to applicator_f have signatures similar to:
@@ -33,10 +57,22 @@ namespace momentmp {
     }
 
     /**
+     * @brief Applicator functor that turns an \link MpMatrix \endlink into an identity matrix
+     */
+    inline applicator_f identity = [](auto &fmp, auto row, auto col) {
+        if (row == col) {
+            fmp = (1^fmpshift(fmp.getShift()));
+        } else {
+            fmp = (0^fmpshift(fmp.getShift()));
+        }
+        return true;
+    };
+
+    /**
      * @brief Cholesky decomposition for MpMatrix
      * 
-     * @param[in] initial Address of source matrix
-     * @param[out] lower Address of destination matrix
+     * @param[in] initial source matrix
+     * @param[out] lower destination matrix
      * @return true (Exceptions aside) was able to perform decomposition
      * @return false (Exceptions aside) was unable to perform decomposition
      */

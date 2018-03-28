@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -110,6 +111,15 @@ namespace momentmp {
          * 
          * @return decltype(auto) 
          */
+        decltype(auto) begin() {
+            return this->matrix.begin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
         decltype(auto) begin() const {
             return this->matrix.begin();
         }
@@ -121,6 +131,15 @@ namespace momentmp {
          */
         decltype(auto) cbegin() const {
             return this->matrix.cbegin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() {
+            return this->matrix.end();
         }
 
         /**
@@ -141,8 +160,103 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
+        MpMatrix &operator+=(const MpMatrix &addend) {
+            if (addend.dim != this->dim) {
+                throw std::runtime_error("Unable to add together matricies of different dimensions");
+            }
+            
+            std::transform(this->begin(), this->end(), addend.cbegin(), this->begin(), std::plus<fmp_t>());
+
+            return *this;
+        }
+
+        MpMatrix &operator+=(const fmp_t &addend) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp += addend;
+            });
+
+            return *this;
+        }
+
+        MpMatrix &operator-=(const MpMatrix &subtrahend) {
+            if (subtrahend.dim != this->dim) {
+                throw std::runtime_error("Unable to subtract matricies of different dimensions");
+            }
+            
+            std::transform(this->begin(), this->end(), subtrahend.cbegin(), this->begin(), std::minus<fmp_t>());
+
+            return *this;
+        }
+
+        MpMatrix &operator-=(const fmp_t &subtrahend) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp -= subtrahend;
+            });
+
+            return *this;
+        }
+
+        MpMatrix &operator*=(const MpMatrix &multiplicand) {
+            if (multiplicand.dim != this->dim) {
+                throw std::runtime_error("MpMatrix multiplication requires same dimensions");
+            }
+            
+            MpMatrix &multiplier = *this;
+            MpMatrix ret(this->dim, this->shift);
+
+            for (size_t i = 0; i < dim; i++) {
+                for (size_t j = 0; j < dim; j++) {
+                    for (size_t k = 0; k < dim; k++) {
+                        ret(i, j) += multiplier(i, k) * multiplicand(k, j);
+                    }
+                }
+            }
+
+            *this = ret;
+            return *this;
+        }
+
+        MpMatrix &operator*=(const fmp_t &multiplicand) {
+            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
+                fmp *= multiplicand;
+            });
+
+            return *this;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
+
+    inline MpMatrix operator+(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs += rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator+(MpMatrix &lhs, const fmp_t &rhs) {
+        lhs += rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator-(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs -= rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator-(MpMatrix &lhs, const fmp_t &rhs) {
+        lhs -= rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator*(MpMatrix &lhs, const MpMatrix &rhs) {
+        lhs *= rhs;
+        return lhs;
+    }
+
+    inline MpMatrix operator*(MpMatrix &lhs, const fmp_t &rhs) {
+        lhs *= rhs;
+        return lhs;
+    }
+
 
     /**
      * @brief Basic overload for the << operator to allow simple formatted-output to std::ostream
