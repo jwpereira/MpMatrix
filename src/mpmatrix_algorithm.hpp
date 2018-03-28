@@ -5,6 +5,22 @@
 
 namespace momentmp {
 
+    inline bool transpose(const MpMatrix &src, MpMatrix &dest) {
+        if (src.getDimension() != dest.getDimension()) {
+            throw std::runtime_error("Unable to transpose square matrix to different size matrix");
+        }
+        
+        auto dim = src.getDimension();
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                dest(j, i) = src(i, j);
+                std::cout << src(i,j) << "->" << dest(j, i) << std::endl;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * @brief Function wrapper alias for the \link apply \endlink function
      * 
