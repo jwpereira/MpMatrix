@@ -5,6 +5,14 @@
 
 namespace momentmp {
 
+    /**
+     * @brief Conjugate transpose a matrix
+     * 
+     * TODO: Look into more efficient methods of transposing matricies
+     * 
+     * @param[in] initial source matrix
+     * @param[out] lower destination matrix
+     */
     inline bool transpose(const MpMatrix &src, MpMatrix &dest) {
         if (src.getDimension() != dest.getDimension()) {
             throw std::runtime_error("Unable to transpose square matrix to different size matrix");
@@ -63,8 +71,8 @@ namespace momentmp {
     /**
      * @brief Cholesky decomposition for MpMatrix
      * 
-     * @param[in] initial Address of source matrix
-     * @param[out] lower Address of destination matrix
+     * @param[in] initial source matrix
+     * @param[out] lower destination matrix
      * @return true (Exceptions aside) was able to perform decomposition
      * @return false (Exceptions aside) was unable to perform decomposition
      */
