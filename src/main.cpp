@@ -32,14 +32,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Before:\n";
     std::cout << m << std::endl;
 
-    MpMatrix m_cholesky(m_dim, m_shift);
-
-    if (cholesky(m, m_cholesky)) {
-        std::cout << "After:\n";
-        std::cout << m_cholesky << std::endl;
-    } else {
-        std::cout << "An error occured:\n";
-    }    
+    MpMatrix m_cholesky = cholesky(m);
 
     std::cout << "Debug:\n";
     std::cout << PrecPrint(m_cholesky, (64 >> 2));

@@ -82,4 +82,5 @@ namespace momentmp {
      * @return false (Exceptions aside) was unable to perform decomposition
      */
     bool cholesky(const MpMatrix &initial, MpMatrix &lower);
+    MpMatrix cholesky(const MpMatrix &initial);
 }
