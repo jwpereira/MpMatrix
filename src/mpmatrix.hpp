@@ -66,6 +66,7 @@ namespace momentmp {
         }
 
         MpMatrix(const MpMatrix &other) = default;
+        MpMatrix(MpMatrix &&other) = default;
 
         /**
          * @brief Returns a reference to the fmp_t element at position (row, col).
@@ -163,6 +164,7 @@ namespace momentmp {
         }
 
         MpMatrix &operator=(const MpMatrix &other) = default;
+        MpMatrix &operator=(MpMatrix &&other) = default;
 
         MpMatrix &operator+=(const MpMatrix &addend) {
             if (addend.dim != this->dim) {

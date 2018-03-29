@@ -76,8 +76,7 @@ int main(int argc, char *argv[]) {
     std::cout << "m * 10\n";
     std::cout << (m * (10^fmpshift(m_shift)));
 
-    MpMatrix m_cholesky_transpose(m_dim, m_shift);
-    transpose(m_cholesky, m_cholesky_transpose);
+    MpMatrix m_cholesky_transpose = transpose(m_cholesky);
 
     std::cout << "m_cholesky_transpose:\n";
     std::cout << m_cholesky_transpose;

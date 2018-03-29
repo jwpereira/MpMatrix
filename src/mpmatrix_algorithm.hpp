@@ -28,6 +28,12 @@ namespace momentmp {
         return true;
     }
 
+    inline MpMatrix transpose(const MpMatrix &src) {
+        MpMatrix dest(src.getDimension(), src.getShift());
+        transpose(src, dest);
+        return dest;
+    }
+
     /**
      * @brief Function wrapper alias for the \link apply \endlink function
      * 
