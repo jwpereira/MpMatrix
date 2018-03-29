@@ -28,6 +28,7 @@ namespace momentmp {
       public:
         fixedmpz(mpz_class number, fmp_shift_t shift) : number(number), shift(shift) {}
         fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
+        fixedmpz(const fixedmpz &other) = default;
 
         /// Returns how much the the underlying mpz_class is shifted by
         fmp_shift_t getShift() const {

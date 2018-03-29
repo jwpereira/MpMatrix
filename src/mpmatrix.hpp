@@ -65,6 +65,8 @@ namespace momentmp {
             });
         }
 
+        MpMatrix(const MpMatrix &other) = default;
+
         /**
          * @brief Returns a reference to the fmp_t element at position (row, col).
          * 
@@ -160,6 +162,8 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
+        MpMatrix &operator=(const MpMatrix &other) = default;
+
         MpMatrix &operator+=(const MpMatrix &addend) {
             if (addend.dim != this->dim) {
                 throw std::runtime_error("Unable to add together matricies of different dimensions");
@@ -227,32 +231,32 @@ namespace momentmp {
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
     };
 
-    inline MpMatrix operator+(MpMatrix &lhs, const MpMatrix &rhs) {
+    inline MpMatrix operator+(MpMatrix lhs, const MpMatrix &rhs) {
         lhs += rhs;
         return lhs;
     }
 
-    inline MpMatrix operator+(MpMatrix &lhs, const fmp_t &rhs) {
+    inline MpMatrix operator+(MpMatrix lhs, const fmp_t &rhs) {
         lhs += rhs;
         return lhs;
     }
 
-    inline MpMatrix operator-(MpMatrix &lhs, const MpMatrix &rhs) {
+    inline MpMatrix operator-(MpMatrix lhs, const MpMatrix &rhs) {
         lhs -= rhs;
         return lhs;
     }
 
-    inline MpMatrix operator-(MpMatrix &lhs, const fmp_t &rhs) {
+    inline MpMatrix operator-(MpMatrix lhs, const fmp_t &rhs) {
         lhs -= rhs;
         return lhs;
     }
 
-    inline MpMatrix operator*(MpMatrix &lhs, const MpMatrix &rhs) {
+    inline MpMatrix operator*(MpMatrix lhs, const MpMatrix &rhs) {
         lhs *= rhs;
         return lhs;
     }
 
-    inline MpMatrix operator*(MpMatrix &lhs, const fmp_t &rhs) {
+    inline MpMatrix operator*(MpMatrix lhs, const fmp_t &rhs) {
         lhs *= rhs;
         return lhs;
     }
