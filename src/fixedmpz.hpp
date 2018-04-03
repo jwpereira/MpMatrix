@@ -15,10 +15,10 @@ namespace momentmp {
 
     /**
      * @brief mpz_class based class purposed for fixed-precision arithmetic.
-     * 
+     *
      * Use this to have mpz's that automatically get shifted into place.
      * Has overloaded operators for convenience. This class essentially wraps GMP's mpz_class,
-     * allowing it to be used for fixed point arithmetic. 
+     * allowing it to be used for fixed point arithmetic.
      */
     class fixedmpz {
       private:
@@ -26,8 +26,8 @@ namespace momentmp {
         fmp_shift_t shift;
 
       public:
-        fixedmpz(mpz_class number, fmp_shift_t shift) : number(number), shift(shift) {}
-        fixedmpz(mpz_class number) : fixedmpz(number, 0) {}
+        fixedmpz(mpz_class number, fmp_shift_t shift) noexcept : number(number), shift(shift) {}
+        fixedmpz(mpz_class number) noexcept : fixedmpz(number, 0) {}
         fixedmpz(const fixedmpz &other) = default;
         fixedmpz(fixedmpz &&other) = default;
 
@@ -85,7 +85,7 @@ namespace momentmp {
 
         /**
          * @brief Allows this object to be cast to mpz_class
-         * 
+         *
          * Returns internal mpz_class
          */
         operator mpz_class() {
@@ -167,9 +167,9 @@ namespace momentmp {
 
     /**
      * @brief Returns the square of a fixedmpz number in fixedmpz format
-     * 
+     *
      * Performs the squaring by multiplying input * input.
-     * 
+     *
      * @param[in] op fixedmpz number to be squared.
      */
     inline fixedmpz sq(const fixedmpz &op) {
@@ -178,26 +178,12 @@ namespace momentmp {
 
     /**
      * @brief Returns the square root of a fixedmpz number in fixedmpz format
-     * 
+     *
      * @param[in] op fixedmpz number to take the square root of.
      */
     inline fixedmpz sqrt(const fixedmpz &op) {
         fixedmpz ret = op << op.getShift();
         ret() = sqrt(ret());
-        return ret;
-    }
-    
-    /**
-     * @brief Returns the factorial result of the number (unsigned int) passed in
-     * 
-     * Simply forwards the calculation to mpz's mpz_fac_ui function.
-     * 
-     * @param base number to factorialize
-     * @return fixedmpz factorial of base
-     */
-    inline fixedmpz factorial(unsigned long base) {
-        fixedmpz ret(0);
-        mpz_fac_ui(ret.get_mpz_t(), base);
         return ret;
     }
 
