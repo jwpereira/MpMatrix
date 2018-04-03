@@ -1,9 +1,7 @@
 #include <iostream>
 #include <gmpxx.h>
 #include "fixedmpz.hpp"
-#include "mpmatrix_algorithm.hpp"
 #include "mpmatrix.hpp"
-#include "prettymp.hpp"
 
 using namespace momentmp;
 
@@ -27,57 +25,9 @@ int main(int argc, char *argv[]) {
         42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
-    MpMatrix m(m_dim, m_shift, m_raw, (m_raw + (m_dim * m_dim)));
-
-    std::cout << "Before:\n";
-    std::cout << m << std::endl;
-
-    MpMatrix m_cholesky = cholesky(m);
-
-    std::cout << "Debug:\n";
-    std::cout << PrecPrint(m_cholesky, (64 >> 2));
-
-    MpMatrix m_i_over_j(m_dim, m_shift);
-    apply(m_i_over_j, sample_gen_ij);
-
-    std::cout << PrecPrint(m_i_over_j, 12);   
-
-    MpMatrix m_i_plus_j(m_dim, m_shift);
-    apply(m_i_plus_j, [](auto &fmp, auto i, auto j) {
-        auto shift = fmpshift(fmp.getShift());
-        fmp = (i^shift) + (j^shift);
-        return true;
-    }); 
-
-    MpMatrix m_i_plus_j_1 = m_i_plus_j;
-    m_i_plus_j_1 += m_i_plus_j;
-
-    std::cout << PrecPrint(m_i_plus_j, 12); 
-    std::cout << PrecPrint(m_i_plus_j_1, 12); 
-
-    MpMatrix i4(m_dim, m_shift);
-    apply(i4, identity);
-
-    auto also_miplusj = m_i_plus_j * i4;
-    std::cout << also_miplusj << std::endl;
-    std::cout << "m\n";
-    std::cout << m;
-    std::cout << "m + 10\n";
-    std::cout << (m + (10^fmpshift(m_shift)));
-    std::cout << "m - 10\n";
-    std::cout << (m - (10^fmpshift(m_shift)));
-    std::cout << "m * 10\n";
-    std::cout << (m * (10^fmpshift(m_shift)));
-
-    MpMatrix m_cholesky_transpose = transpose(m_cholesky);
-
-    std::cout << "m_cholesky_transpose:\n";
-    std::cout << m_cholesky_transpose;
-
-    std::cout << "m_cholesky * m_cholesky_transpose\n";
-    std::cout << m_cholesky * m_cholesky_transpose << std::endl;
-
-    std::cout << factorial(100).get_mpz_t() << std::endl;
+    MpMatrix m(2, 2, 256);
+    m[0][0] = 100^256_fmpz;
+    std::cout << m[0][0] << std::endl;
 
     return 0;
 }
