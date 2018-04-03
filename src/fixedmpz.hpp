@@ -188,6 +188,20 @@ namespace momentmp {
     }
     
     /**
+     * @brief Returns the factorial result of the number (unsigned int) passed in
+     * 
+     * Simply forwards the calculation to mpz's mpz_fac_ui function.
+     * 
+     * @param base number to factorialize
+     * @return fixedmpz factorial of base
+     */
+    inline fixedmpz factorial(unsigned long base) {
+        fixedmpz ret(0);
+        mpz_fac_ui(ret.get_mpz_t(), base);
+        return ret;
+    }
+
+    /**
      * @brief Utility class designed purely to make the _fmpz literal operator happen
      *
      * This class really should not be used for anything as it is just made to allow

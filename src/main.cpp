@@ -77,5 +77,7 @@ int main(int argc, char *argv[]) {
     std::cout << "m_cholesky * m_cholesky_transpose\n";
     std::cout << m_cholesky * m_cholesky_transpose << std::endl;
 
+    std::cout << factorial(100).get_mpz_t() << std::endl;
+
     return 0;
 }
