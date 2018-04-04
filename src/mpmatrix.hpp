@@ -78,6 +78,9 @@ namespace momentmp {
         MpMatrix(size_t rows, size_t cols, fmp_shift_t shift) noexcept 
                 : rows(rows), cols(cols), shift(shift) {
             this->matrix = std::vector<MpColumn>(cols, MpColumn(rows, 0, shift));
+            for (size_t i = 0; i < cols; i++) {
+                this->matrix[i].setId(i);
+            }
         }
 
         MpMatrix(const MpMatrix &other) = default;
@@ -99,6 +102,60 @@ namespace momentmp {
             return this->cols;
         }
 
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) begin() {
+            return this->matrix.begin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) begin() const {
+            return this->matrix.begin();
+        }
+
+        /**
+         * @brief Returns a constant begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cbegin() const {
+            return this->matrix.cbegin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() {
+            return this->matrix.end();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() const {
+            return this->matrix.end();
+        }
+
+        /**
+         * @brief Returns a constant end() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cend() const {
+            return this->matrix.cend();
+        }
+
         MpColumn &operator[](const size_t col) {
             return this->matrix[col];
         }
@@ -115,7 +172,7 @@ namespace momentmp {
 
         for (size_t i = 0; i < mp.getRows(); i++) {
             for (size_t j = 0; j < mp.getCols(); j++) {
-                os << mp[i][j] << '\t';
+                os << mp[j][i] << '\t';
             }
             os << '\n';
         }
