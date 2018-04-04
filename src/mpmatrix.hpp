@@ -83,6 +83,22 @@ namespace momentmp {
         MpMatrix(const MpMatrix &other) = default;
         MpMatrix(MpMatrix &&other) = default;
 
+        size_t getRows() {
+            return this->rows;
+        }
+
+        size_t getRows() const {
+            return this->rows;
+        }
+
+        size_t getCols() {
+            return this->cols;
+        }
+
+        size_t getCols() const {
+            return this->cols;
+        }
+
         MpColumn &operator[](const size_t col) {
             return this->matrix[col];
         }
@@ -90,5 +106,22 @@ namespace momentmp {
         MpColumn &operator[](const size_t col) const {
             return const_cast<MpColumn&>(this->matrix[col]);
         }
+
+        friend std::ostream &operator<<(std::ostream &os, const MpMatrix &mp);
     };
+
+    inline std::ostream &operator<<(std::ostream &os, const MpMatrix &mp) {
+        std::ios::fmtflags initialFlags(os.flags());
+
+        for (size_t i = 0; i < mp.getRows(); i++) {
+            for (size_t j = 0; j < mp.getCols(); j++) {
+                os << mp[i][j] << '\t';
+            }
+            os << '\n';
+        }
+
+        os.flags(initialFlags);
+
+        return os;
+    }
 }

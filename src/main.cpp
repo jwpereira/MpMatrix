@@ -29,5 +29,7 @@ int main(int argc, char *argv[]) {
     m[0][0] = 100^256_fmpz;
     std::cout << m[0][0] << std::endl;
 
+    std::cout << m;
+
     return 0;
 }
