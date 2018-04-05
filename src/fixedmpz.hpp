@@ -50,7 +50,7 @@ namespace momentmp {
             return this->number.get_mpz_t();
         }
 
-        void setshift(fmp_shift_t shift) {
+        void setShift(fmp_shift_t shift) {
             this->shift = shift;
         }
 
@@ -184,6 +184,20 @@ namespace momentmp {
     inline fixedmpz sqrt(const fixedmpz &op) {
         fixedmpz ret = op << op.getShift();
         ret() = sqrt(ret());
+        return ret;
+    }
+
+    /**
+     * @brief Returns the factorial result of the number (unsigned int) passed in
+     * 
+     * Simply forwards the calculation to mpz's mpz_fac_ui function.
+     * 
+     * @param base number to factorialize
+     * @return fixedmpz factorial of base
+     */
+    inline fixedmpz factorial(unsigned long base) {
+        fixedmpz ret(0);
+        mpz_fac_ui(ret.get_mpz_t(), base);
         return ret;
     }
 
