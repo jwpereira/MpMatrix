@@ -2,6 +2,7 @@
 #include <gmpxx.h>
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
+#include "mpmatrix_algorithm.hpp"
 
 using namespace momentmp;
 
@@ -25,9 +26,9 @@ int main(int argc, char *argv[]) {
         42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
-    MpMatrix m(2, 2, 256);
-    m[0][0] = 100^256_fmpz;
-    std::cout << m[0][0] << std::endl;
+    auto dim = 10;
+    MpMatrix m(dim, dim, 256);
+    momentInit(m);
 
     std::cout << m;
 
