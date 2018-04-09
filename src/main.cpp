@@ -2,7 +2,7 @@
 #include <gmpxx.h>
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
-#include "mpmatrix_algorithm.hpp"
+#include "moment_algorithm.hpp"
 
 using namespace momentmp;
 
