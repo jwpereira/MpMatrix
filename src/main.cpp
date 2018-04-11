@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
         42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     };
 
-    auto dim = 10;
+    auto dim = 3;
     MpMatrix m(dim, dim, 256);
     momentInit(m);
 
