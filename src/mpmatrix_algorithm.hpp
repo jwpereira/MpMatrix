@@ -5,7 +5,7 @@
 
 namespace momentmp {
 
-    inline void momentInitCol(MpColumn &col) {
+    inline void momentInitCol(MpArray &col) {
         const auto shift = col.getShift();
         const auto size  = col.getSize();
 
@@ -26,7 +26,7 @@ namespace momentmp {
         return;
     }
 
-    inline void cholesky_update(const MpColumn &leftCol, MpColumn &currCol) {
+    inline void cholesky_update(const MpArray &leftCol, MpArray &currCol) {
         return;
     }
 }
