@@ -69,18 +69,22 @@ namespace momentmp {
         }
     };
 
+    enum MpMatrixMode { ROW_ORIENTED, COL_ORIENTED };
+
     class MpMatrix {
       private:
         std::vector<MpArray> matrix;
         size_t rows, cols;       ///< dimension * dimension = rows [we're working with square matricies]
         fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
+        MpMatrixMode mode;
       public:
-        MpMatrix(size_t rows, size_t cols, fmp_shift_t shift) noexcept 
+        MpMatrix(size_t rows, size_t cols, fmp_shift_t shift, MpMatrixMode mode = COL_ORIENTED) noexcept 
                 : rows(rows), cols(cols), shift(shift) {
             this->matrix = std::vector<MpArray>(cols, MpArray(rows, 0, shift));
             for (size_t i = 0; i < cols; i++) {
                 this->matrix[i].setId(i);
             }
+            this->mode = mode;
         }
 
         MpMatrix(const MpMatrix &other) = default;
@@ -100,6 +104,10 @@ namespace momentmp {
 
         size_t getCols() const {
             return this->cols;
+        }
+
+        decltype(auto) getMode() const {
+            return this->mode;
         }
 
         /**
@@ -156,6 +164,10 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
+        void setMode(MpMatrixMode mode) {
+            this->mode = mode;
+        }
+
         MpArray &operator[](const size_t col) {
             return this->matrix[col];
         }
@@ -170,11 +182,22 @@ namespace momentmp {
     inline std::ostream &operator<<(std::ostream &os, const MpMatrix &mp) {
         std::ios::fmtflags initialFlags(os.flags());
 
-        for (size_t i = 0; i < mp.getRows(); i++) {
-            for (size_t j = 0; j < mp.getCols(); j++) {
-                os << mp[j][i] << '\t';
+        auto mode = mp.getMode();
+
+        if (mode == COL_ORIENTED) {
+            for (size_t i = 0; i < mp.getRows(); i++) {
+                for (size_t j = 0; j < mp.getCols(); j++) {
+                    os << mp[j][i] << '\t';
+                }
+                os << '\n';
             }
-            os << '\n';
+        } else if (mode == ROW_ORIENTED) {
+            for (size_t i = 0; i < mp.getRows(); i++) {
+                for (size_t j = 0; j < mp.getCols(); j++) {
+                    os << mp[i][j] << '\t';
+                }
+                os << '\n';
+            }
         }
 
         os.flags(initialFlags);
