@@ -69,7 +69,7 @@ namespace momentmp {
         }
     };
 
-    enum MpMatrixMode { ROW_ORIENTED, COL_ORIENTED };
+    enum MpMatrixMode : bool { ROW_ORIENTED=true , COL_ORIENTED=false };
 
     class MpMatrix {
       private:
