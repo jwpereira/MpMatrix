@@ -23,7 +23,35 @@ namespace momentmp {
     }
 
     inline void cholesky_decompose(MpMatrix &matrix) {
-        return;
+        auto dim = matrix.getRows();
+
+        // procCol is the column currently being applied to every other column
+        for (auto &procCol : matrix) {
+            auto id = procCol.getId();
+            auto start = id + 1;
+            MpColumn orig(procCol);
+
+            // Replace procCol with all the values under diagonal with those values divided by
+            // diagonal
+            auto &diagonal = orig[id];
+            for (size_t row = start; row < dim; row++) {
+                procCol[row] /= diagonal;
+            }
+
+            // Apply procCol to all other columns to its right
+            for (size_t col = start; col < dim; col++) {
+                MpColumn &destCol = matrix[col];
+                
+                // Going down the rows for each col, z' = z - yx
+                for (size_t row = col; row < dim; row++) {
+                    auto &z = destCol[row];
+                    auto &y = orig[col];
+                    auto &x = procCol[row];
+
+                    z = z - (y * x);
+                }
+            }
+        }
     }
 
     inline void cholesky_update(const MpColumn &leftCol, MpColumn &currCol) {
