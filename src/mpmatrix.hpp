@@ -18,19 +18,19 @@ namespace momentmp {
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
     using fmp_shift_t = fmp_shift_t;   ///< alias to the scaling type really used for fixedmpz
 
-    class MpColumn {
+    class MpArray {
       private:
         std::vector<fmp_t> col;
         size_t rows, id;
         fmp_shift_t shift;
       public:
-        MpColumn(size_t rows, size_t id, fmp_shift_t shift) noexcept 
+        MpArray(size_t rows, size_t id, fmp_shift_t shift) noexcept 
                 : rows(rows), id(id), shift(shift) {
             this->col = std::vector<fmp_t>(rows, fixedmpz(0, shift));
         }
 
-        MpColumn(const MpColumn &other) = default;
-        MpColumn(MpColumn &&other) = default;
+        MpArray(const MpArray &other) = default;
+        MpArray(MpArray &&other) = default;
         
         size_t getId() {
             return this->id;
@@ -71,13 +71,13 @@ namespace momentmp {
 
     class MpMatrix {
       private:
-        std::vector<MpColumn> matrix;
+        std::vector<MpArray> matrix;
         size_t rows, cols;       ///< dimension * dimension = rows [we're working with square matricies]
         fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
       public:
         MpMatrix(size_t rows, size_t cols, fmp_shift_t shift) noexcept 
                 : rows(rows), cols(cols), shift(shift) {
-            this->matrix = std::vector<MpColumn>(cols, MpColumn(rows, 0, shift));
+            this->matrix = std::vector<MpArray>(cols, MpArray(rows, 0, shift));
             for (size_t i = 0; i < cols; i++) {
                 this->matrix[i].setId(i);
             }
@@ -156,12 +156,12 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
-        MpColumn &operator[](const size_t col) {
+        MpArray &operator[](const size_t col) {
             return this->matrix[col];
         }
 
-        MpColumn &operator[](const size_t col) const {
-            return const_cast<MpColumn&>(this->matrix[col]);
+        MpArray &operator[](const size_t col) const {
+            return const_cast<MpArray&>(this->matrix[col]);
         }
 
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &mp);

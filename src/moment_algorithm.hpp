@@ -5,7 +5,7 @@
 
 namespace momentmp {
 
-    inline void momentInitCol(MpColumn &col) {
+    inline void momentInitCol(MpArray &col) {
         const auto shift = col.getShift();
         const auto size  = col.getSize();
 
@@ -29,7 +29,7 @@ namespace momentmp {
         for (auto &procCol : matrix) {
             auto id = procCol.getId();
             auto start = id + 1;
-            MpColumn orig(procCol);
+            MpArray orig(procCol);
 
             // Replace procCol with all the values under diagonal with those values divided by
             // diagonal
@@ -40,8 +40,8 @@ namespace momentmp {
 
             // Apply procCol to all other columns to its right
             for (size_t col = start; col < dim; col++) {
-                MpColumn &destCol = matrix[col];
-                
+                MpArray &destCol = matrix[col];
+
                 // Going down the rows for each col, z' = z - yx
                 for (size_t row = col; row < dim; row++) {
                     auto &z = destCol[row];
@@ -54,7 +54,7 @@ namespace momentmp {
         }
     }
 
-    inline void cholesky_update(const MpColumn &leftCol, MpColumn &currCol) {
+    inline void cholesky_update(const MpArray &leftCol, MpArray &currCol) {
         return;
     }
 }
