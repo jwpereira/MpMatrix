@@ -51,6 +51,9 @@ int main(int argc, char *argv[]) {
     std::cout << "after:\n";
     std::cout << m;
 
+    transpose(m);
+    std::cout << "after transpose:\n";
+    std::cout << m;
 
     return 0;
 }

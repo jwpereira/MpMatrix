@@ -204,4 +204,23 @@ namespace momentmp {
 
         return os;
     }
+
+    inline void transpose(MpMatrix &matrix) {
+        auto dim = matrix.getCols();
+
+        for (size_t n = 0; n < (dim - 1); n++) {
+            for (size_t m = (n + 1); m < dim; m++) {
+                auto temp = matrix[m][n];
+                matrix[m][n] = matrix[n][m];
+                matrix[n][m] = temp;
+            }
+        }
+
+        auto mode = matrix.getMode();
+        if (mode == COL_ORIENTED) {
+            matrix.setMode(ROW_ORIENTED);
+        } else if (mode == ROW_ORIENTED) {
+            matrix.setMode(COL_ORIENTED);
+        }
+    }
 }
