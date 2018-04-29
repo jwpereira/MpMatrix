@@ -128,6 +128,12 @@ namespace momentmp {
             return *this;
         }
 
+        fixedmpz operator-() const {
+            fixedmpz ret(*this);
+            mpz_neg(ret.get_mpz_t(), this->get_mpz_t());
+            return ret;
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const fixedmpz &fmp);
     };
 
