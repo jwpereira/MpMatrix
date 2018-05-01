@@ -21,12 +21,12 @@ namespace momentmp {
     class MpArray {
       private:
         std::vector<fmp_t> col;
-        size_t rows, id;
+        size_t dim, id;
         fmp_shift_t shift;
       public:
-        MpArray(size_t rows, size_t id, fmp_shift_t shift) noexcept 
-                : rows(rows), id(id), shift(shift) {
-            this->col = std::vector<fmp_t>(rows, fixedmpz(0, shift));
+        MpArray(size_t dim, size_t id, fmp_shift_t shift) noexcept 
+                : dim(dim), id(id), shift(shift) {
+            this->col = std::vector<fmp_t>(dim, fixedmpz(0, shift));
         }
 
         MpArray(const MpArray &other) = default;
@@ -40,12 +40,12 @@ namespace momentmp {
             return this->id;
         }
 
-        size_t getSize() {
-            return this->rows;
+        size_t size() {
+            return this->dim;
         }
         
-        size_t getSize() const {
-            return this->rows;
+        size_t size() const {
+            return this->dim;
         }
 
         fmp_shift_t getShift() {

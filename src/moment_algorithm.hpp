@@ -7,7 +7,7 @@ namespace momentmp {
 
     inline void momentInitCol(MpArray &col) {
         const auto shift = col.getShift();
-        const auto size  = col.getSize();
+        const auto size  = col.size();
 
         const auto i = col.getId();
 
