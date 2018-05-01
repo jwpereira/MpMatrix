@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
 
     auto dim = 3;
-    MpMatrix m(dim, dim, m_shift);
+    MpMatrix m(dim, m_shift);
 
     fixedmpz m_raw[] = {
         4^256_fmpz,     0^256_fmpz,     0^256_fmpz, 

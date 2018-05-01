@@ -23,7 +23,7 @@ namespace momentmp {
     }
 
     inline void cholesky_decompose(MpMatrix &matrix) {
-        auto dim = matrix.getRows();
+        auto dim = matrix.getDim();
 
         // procCol is the column currently being applied to every other column
         for (auto &procCol : matrix) {
