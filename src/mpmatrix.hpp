@@ -21,12 +21,12 @@ namespace momentmp {
     class MpArray {
       private:
         std::vector<fmp_t> col;
-        size_t rows, id;
+        size_t dim, id;
         fmp_shift_t shift;
       public:
-        MpArray(size_t rows, size_t id, fmp_shift_t shift) noexcept 
-                : rows(rows), id(id), shift(shift) {
-            this->col = std::vector<fmp_t>(rows, fixedmpz(0, shift));
+        MpArray(size_t dim, size_t id, fmp_shift_t shift) noexcept 
+                : dim(dim), id(id), shift(shift) {
+            this->col = std::vector<fmp_t>(dim, fixedmpz(0, shift));
         }
 
         MpArray(const MpArray &other) = default;
@@ -40,12 +40,12 @@ namespace momentmp {
             return this->id;
         }
 
-        size_t getSize() {
-            return this->rows;
+        size_t size() {
+            return this->dim;
         }
         
-        size_t getSize() const {
-            return this->rows;
+        size_t size() const {
+            return this->dim;
         }
 
         fmp_shift_t getShift() {
@@ -74,14 +74,14 @@ namespace momentmp {
     class MpMatrix {
       private:
         std::vector<MpArray> matrix;
-        size_t rows, cols;       ///< dimension * dimension = rows [we're working with square matricies]
+        size_t dim;         ///< dimension * dimension = rows [we're working with square matricies]
         fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
         MpMatrixMode mode;
       public:
-        MpMatrix(size_t rows, size_t cols, fmp_shift_t shift, MpMatrixMode mode = COL_ORIENTED) noexcept 
-                : rows(rows), cols(cols), shift(shift) {
-            this->matrix = std::vector<MpArray>(cols, MpArray(rows, 0, shift));
-            for (size_t i = 0; i < cols; i++) {
+        MpMatrix(size_t dim, fmp_shift_t shift, MpMatrixMode mode = COL_ORIENTED) noexcept 
+                : dim(dim),  shift(shift) {
+            this->matrix = std::vector<MpArray>(dim, MpArray(dim, 0, shift));
+            for (size_t i = 0; i < dim; i++) {
                 this->matrix[i].setId(i);
             }
             this->mode = mode;
@@ -90,20 +90,12 @@ namespace momentmp {
         MpMatrix(const MpMatrix &other) = default;
         MpMatrix(MpMatrix &&other) = default;
 
-        size_t getRows() {
-            return this->rows;
+        size_t getDim() {
+            return this->dim;
         }
 
-        size_t getRows() const {
-            return this->rows;
-        }
-
-        size_t getCols() {
-            return this->cols;
-        }
-
-        size_t getCols() const {
-            return this->cols;
+        size_t getDim() const {
+            return this->dim;
         }
 
         decltype(auto) getMode() const {
@@ -185,15 +177,15 @@ namespace momentmp {
         auto mode = mp.getMode();
 
         if (mode == COL_ORIENTED) {
-            for (size_t i = 0; i < mp.getRows(); i++) {
-                for (size_t j = 0; j < mp.getCols(); j++) {
+            for (size_t i = 0; i < mp.getDim(); i++) {
+                for (size_t j = 0; j < mp.getDim(); j++) {
                     os << mp[j][i] << '\t';
                 }
                 os << '\n';
             }
         } else if (mode == ROW_ORIENTED) {
-            for (size_t i = 0; i < mp.getRows(); i++) {
-                for (size_t j = 0; j < mp.getCols(); j++) {
+            for (size_t i = 0; i < mp.getDim(); i++) {
+                for (size_t j = 0; j < mp.getDim(); j++) {
                     os << mp[i][j] << '\t';
                 }
                 os << '\n';
@@ -206,7 +198,7 @@ namespace momentmp {
     }
 
     inline void transpose(MpMatrix &matrix) {
-        auto dim = matrix.getCols();
+        auto dim = matrix.getDim();
 
         for (size_t n = 0; n < (dim - 1); n++) {
             for (size_t m = (n + 1); m < dim; m++) {
