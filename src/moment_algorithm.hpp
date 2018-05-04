@@ -53,8 +53,4 @@ namespace momentmp {
             }
         }
     }
-
-    inline void cholesky_update(const MpArray &leftCol, MpArray &currCol) {
-        return;
-    }
 }
