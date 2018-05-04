@@ -53,4 +53,8 @@ namespace momentmp {
             }
         }
     }
+
+    inline void invert(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+    }
 }
