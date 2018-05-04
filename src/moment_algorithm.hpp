@@ -54,6 +54,17 @@ namespace momentmp {
         }
     }
 
+    inline void extractDiagonal(MpMatrix &src, MpArray &dest) {
+        if (dest.size() != src.getDim()) {
+            throw std::runtime_error("Cannot extract to different size array");
+        }
+
+        for (auto &proc : src) {
+            auto id = proc.getId();
+            dest[id] = proc[id];
+        }
+    }
+
     inline void invert(MpMatrix &matrix) {
         auto dim = matrix.getDim();
     }

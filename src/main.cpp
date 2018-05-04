@@ -55,5 +55,10 @@ int main(int argc, char *argv[]) {
     std::cout << "after transpose:\n";
     std::cout << m;
 
+    MpArray diagonals(dim, m_shift);
+    extractDiagonal(m, diagonals);
+    std::cout << "diagonals:\n";
+    std::cout << diagonals;
+
     return 0;
 }
