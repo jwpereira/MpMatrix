@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     fmp_shift_t m_shift = 256;
 
     // size_t dim = 4;
-    // MpMatrix m(dim, dim, m_shift);
+    // MpMatrix m(dim, m_shift);
     // fixedmpz m_raw[] = {
     //     18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
     //     22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,
@@ -28,15 +28,22 @@ int main(int argc, char *argv[]) {
     //     42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     // };
 
-
     auto dim = 3;
     MpMatrix m(dim, m_shift);
-
     fixedmpz m_raw[] = {
         4^256_fmpz,     0^256_fmpz,     0^256_fmpz, 
         12^256_fmpz,    37^256_fmpz,    0^256_fmpz,
         -(16^256_fmpz), -(43^256_fmpz), 98^256_fmpz 
     };
+
+    // size_t dim = 4;
+    // MpMatrix m(dim, m_shift);
+    // fixedmpz m_raw[] = {
+    //     1^256_fmpz, 0^256_fmpz, 0^256_fmpz, 0^256_fmpz,  
+    //     4^256_fmpz, 1^256_fmpz, 0^256_fmpz, 0^256_fmpz,
+    //     6^256_fmpz, 2^256_fmpz, 1^256_fmpz, 0^256_fmpz, 
+    //     3^256_fmpz, 7^256_fmpz, 4^256_fmpz, 1^256_fmpz
+    // };
 
     for (size_t col = 0; col < dim; col++) {
         for (size_t row = 0; row < dim; row++) {
@@ -64,9 +71,16 @@ int main(int argc, char *argv[]) {
     extractDiagonal(m, diagonals);
     std::cout << "diagonals:\n";
     std::cout << diagonals;
+    std::cout << "lower:\n";
+    std::cout << m;
 
+    // reorient(m);
     invert(m);
     std::cout << "inverted:\n";
+    std::cout << m;
+
+    invert(m);
+    std::cout << "inverted inverted:\n";
     std::cout << m;
 
     return 0;
