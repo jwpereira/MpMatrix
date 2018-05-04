@@ -51,14 +51,23 @@ int main(int argc, char *argv[]) {
     std::cout << "after:\n";
     std::cout << m;
 
-    transpose(m);
+    MpMatrix lt(m);
+    transpose(lt);
     std::cout << "after transpose:\n";
+    std::cout << lt;
+
+    reorient(m);
+    std::cout << "reoriented:\n";
     std::cout << m;
 
     MpArray diagonals(dim, m_shift);
     extractDiagonal(m, diagonals);
     std::cout << "diagonals:\n";
     std::cout << diagonals;
+
+    invert(m);
+    std::cout << "inverted:\n";
+    std::cout << m;
 
     return 0;
 }

@@ -162,6 +162,14 @@ namespace momentmp {
             return this->dim;
         }
 
+        fmp_shift_t getShift() {
+            return this->shift;
+        }
+
+        fmp_shift_t getShift() const {
+            return this->shift;
+        }
+
         decltype(auto) getMode() const {
             return this->mode;
         }
@@ -271,6 +279,10 @@ namespace momentmp {
                 matrix[n][m] = temp;
             }
         }
+    }
+
+    inline void reorient(MpMatrix &matrix) {
+        transpose(matrix);
 
         auto mode = matrix.getMode();
         if (mode == COL_ORIENTED) {
