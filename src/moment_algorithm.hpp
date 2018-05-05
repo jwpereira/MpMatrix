@@ -94,4 +94,13 @@ namespace momentmp {
             }
         }
     }
+
+    inline void invert_diagonal(MpArray &diagonal) {
+        auto shift = fmpshift(diagonal.getShift());
+        auto one = 1^shift;
+
+        std::for_each(diagonal.begin(), diagonal.end(), [&](auto &element) {
+            element = one / element;
+        });
+    }
 }

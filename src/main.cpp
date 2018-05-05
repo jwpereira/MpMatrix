@@ -51,11 +51,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    std::cout << "before:\n";
+    std::cout << "original:\n";
     std::cout << m;
 
     cholesky_decompose(m);
-    std::cout << "after:\n";
+    std::cout << "cholesky:\n";
     std::cout << m;
 
     MpMatrix lt(m);
@@ -79,9 +79,17 @@ int main(int argc, char *argv[]) {
     std::cout << "inverted:\n";
     std::cout << m;
 
+    invert_diagonal(diagonals);
+    std::cout << "diagonals inverted:\n";
+    std::cout << diagonals;
+
     invert(m);
     std::cout << "inverted inverted:\n";
     std::cout << m;
+
+    invert_diagonal(diagonals);
+    std::cout << "diagonals inverted inverted:\n";
+    std::cout << diagonals;
 
     return 0;
 }
