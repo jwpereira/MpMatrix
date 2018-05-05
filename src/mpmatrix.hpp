@@ -269,6 +269,25 @@ namespace momentmp {
         return os;
     }
 
+    inline void multiply(const MpMatrix &multiplicand, const MpMatrix &multiplier, MpMatrix &product) {
+        if (multiplicand.getDim() != multiplier.getDim()) {
+            throw std::runtime_error("Unable to multiply MpMatricies of different dimensions");
+        }
+        
+        if (multiplicand.getDim() != product.getDim()) {
+            throw std::runtime_error("Destination (Product) matrix must be of same dimension as factors");
+        }
+
+        auto dim = multiplicand.getDim();
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                for (size_t k = 0; k < dim; k++) {
+                    product[i][j] += (multiplicand[i][k] * multiplier[k][j]);
+                }
+            }
+        }
+    }
+
     inline void transpose(MpMatrix &matrix) {
         auto dim = matrix.getDim();
 
