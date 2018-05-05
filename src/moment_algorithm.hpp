@@ -54,7 +54,53 @@ namespace momentmp {
         }
     }
 
-    inline void cholesky_update(const MpArray &leftCol, MpArray &currCol) {
-        return;
+    inline void extractDiagonal(MpMatrix &src, MpArray &dest, bool replace=true) {
+        if (dest.size() != src.getDim()) {
+            throw std::runtime_error("Cannot extract to different size array");
+        }
+
+        auto shift = fmpshift(src.getShift());
+        auto one = (1^shift);
+
+        for (auto &proc : src) {
+            auto id = proc.getId();
+            dest[id] = proc[id];
+
+            if (replace) {
+                proc[id] = one;
+            }
+        }
+    }
+
+    inline void invert(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+
+        // procRow is the row currently being applied to all other rows
+        for (auto &procRow : matrix) {
+            auto id = procRow.getId();
+            auto start = id + 1;
+
+            for (size_t row = start; row < dim; row++) {
+                auto &destRow = matrix[row];
+                auto scale = destRow[id];
+
+                for (size_t i = 0; i < dim; i++) {
+                    if (i == id) {
+                        destRow[i] = -destRow[i];
+                    } else {
+                        destRow[i] = destRow[i] - (procRow[i] * scale);
+                    }
+                }
+            }
+        }
+    }
+
+    inline void invert_diagonal(MpArray &diagonal) {
+        auto shift = fmpshift(diagonal.getShift());
+        auto one = 1^shift;
+
+        std::for_each(diagonal.begin(), diagonal.end(), [&](auto &element) {
+            element = one / element;
+        });
     }
 }

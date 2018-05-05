@@ -24,9 +24,9 @@ namespace momentmp {
         size_t dim, id;
         fmp_shift_t shift;
       public:
-        MpArray(size_t dim, size_t id, fmp_shift_t shift) noexcept 
+        MpArray(size_t dim, fmp_shift_t shift, size_t id=-1) noexcept 
                 : dim(dim), id(id), shift(shift) {
-            this->col = std::vector<fmp_t>(dim, fixedmpz(0, shift));
+            this->col = std::vector<fmp_t>(dim, fmp_t(0, shift));
         }
 
         MpArray(const MpArray &other) = default;
@@ -67,7 +67,71 @@ namespace momentmp {
         fmp_t &operator[](size_t row) const {
             return const_cast<fmp_t&>(this->col[row]);
         }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) begin() {
+            return this->col.begin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) begin() const {
+            return this->col.begin();
+        }
+
+        /**
+         * @brief Returns a constant begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cbegin() const {
+            return this->col.cbegin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() {
+            return this->col.end();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() const {
+            return this->col.end();
+        }
+
+        /**
+         * @brief Returns a constant end() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cend() const {
+            return this->col.cend();
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, MpArray &array);
     };
+
+    inline std::ostream &operator<<(std::ostream &os, MpArray &array) {
+        for (auto &e : array) {
+            os << e << ' ';
+        }
+
+        return os << std::endl;
+    }
 
     enum MpMatrixMode : bool { ROW_ORIENTED=true , COL_ORIENTED=false };
 
@@ -80,7 +144,7 @@ namespace momentmp {
       public:
         MpMatrix(size_t dim, fmp_shift_t shift, MpMatrixMode mode = COL_ORIENTED) noexcept 
                 : dim(dim),  shift(shift) {
-            this->matrix = std::vector<MpArray>(dim, MpArray(dim, 0, shift));
+            this->matrix = std::vector<MpArray>(dim, MpArray(dim, shift, 0));
             for (size_t i = 0; i < dim; i++) {
                 this->matrix[i].setId(i);
             }
@@ -96,6 +160,14 @@ namespace momentmp {
 
         size_t getDim() const {
             return this->dim;
+        }
+
+        fmp_shift_t getShift() {
+            return this->shift;
+        }
+
+        fmp_shift_t getShift() const {
+            return this->shift;
         }
 
         decltype(auto) getMode() const {
@@ -207,6 +279,10 @@ namespace momentmp {
                 matrix[n][m] = temp;
             }
         }
+    }
+
+    inline void reorient(MpMatrix &matrix) {
+        transpose(matrix);
 
         auto mode = matrix.getMode();
         if (mode == COL_ORIENTED) {
