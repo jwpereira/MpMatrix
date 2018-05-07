@@ -303,9 +303,13 @@ namespace momentmp {
             for (size_t j = 0; j < dim; j++) {
                 for (size_t k = 0; k < dim; k++) {
                     product[i][j] += (multiplicand[i][k] * multiplier[k][j]);
+                    // if(i==9 && j==9)  std::cout << "multiplicand[i][k]: " << multiplicand[i][k] << " multiplier[k][j]: " << multiplier[k][j] << " = " << (multiplicand[i][k] * multiplier[k][j]) << std::endl; 
                 }
             }
         }
+        // std::cout << "multiplicand[9][9]" << multiplicand[9][9] << std::endl;
+        // std::cout << "multiplier[9][9]" << multiplier[9][9] << std::endl;
+        // std::cout << "product[9][9]" << product[9][9] << std::endl;
     }
 
     inline void transpose(MpMatrix &matrix) {

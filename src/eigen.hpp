@@ -13,6 +13,12 @@ namespace momentmp {
         std::vector<double> m(dim * dim);
         matrix.dumpVecDouble(m);
 
+        // std::cout << "\n-HERE'S WHERE THE FUN STARTS-" << std::endl;
+        // for (size_t i = 0; i < (dim * dim); i++) {
+        //     std::cout << *(&m[i]) << ' ';
+        // }
+        // std::cout << "\n\n";
+
         gsl_vector *eval = gsl_vector_alloc(dim);
         gsl_eigen_symm_workspace *workspace = gsl_eigen_symm_alloc(dim);
         gsl_matrix_view gsl_m;
@@ -48,6 +54,12 @@ namespace momentmp {
                 }
             }
         }
+
+        // std::cout << "Eigenvalues: " << std::endl;
+        // for (auto &elem : eigenvalues) {
+        //     std::cout << elem << ' ';
+        // }
+        // std::cout << '\n';
 
         return est;
     }

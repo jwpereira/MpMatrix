@@ -106,9 +106,8 @@ namespace momentmp {
         }
 
         fixedmpz &operator*=(const fixedmpz &multiplier) {
-            this->number >>= (this->shift / 2);
-            this->number *= (multiplier.number >> multiplier.shift / 2);
-
+            this->number *= multiplier.number;
+            this->number >>= this->shift;
             return *this;
         }
 
