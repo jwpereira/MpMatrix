@@ -6,12 +6,6 @@
 
 using namespace momentmp;
 
-bool sample_gen_ij(fmp_t &dest, size_t i, size_t j) {
-    auto shift = fmpshift(dest.getShift());
-    dest = ((i+1)^shift) / ((j+1)^shift);
-    return true;
-}
-
 void demo(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
     std::cout << "original:\n";
     std::cout << m;
