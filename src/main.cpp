@@ -54,6 +54,37 @@ void demo(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
     std::cout << diagonals;
 }
 
+void demo_multiply(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
+    MpMatrix l(m);
+    cholesky_decompose(l);
+    std::cout << "cholesky ld:\n" << l << std::endl;
+
+    MpArray diagonal(dim, m_shift);
+    extract_diagonal(l, diagonal);
+
+    reorient(l);
+
+    MpMatrix lt(l);
+    transpose(lt);
+
+    std::cout << "m:\n" << m << std::endl;
+    std::cout << "l:\n" << l << std::endl;
+    std::cout << "lt:\n" << lt << std::endl;
+    std::cout << "diagonal: " << diagonal << std::endl;
+
+    MpMatrix d(dim, m_shift, ROW_ORIENTED);
+    impose_diagonal(diagonal, d);
+    std::cout << "ld:\n" << l << std::endl;
+
+    MpMatrix ld(dim, m_shift, ROW_ORIENTED);
+    multiply(l, d, ld);
+
+    MpMatrix ldlt(dim, m_shift, ROW_ORIENTED);
+    multiply(ld, lt, ldlt);
+    
+    std::cout << "ldlt:\n" << ldlt << std::endl;
+}
+
 int main(int argc, char *argv[]) {
     // Not using printf, therefore no need to have cout sync with stdio ->
     // better performance
@@ -94,35 +125,7 @@ int main(int argc, char *argv[]) {
     }
 
     // demo(m, dim, m_shift);
-
-    MpMatrix l(m);
-    cholesky_decompose(l);
-    std::cout << "cholesky ld:\n" << l << std::endl;
-
-    MpArray diagonal(dim, m_shift);
-    extract_diagonal(l, diagonal);
-
-    reorient(l);
-
-    MpMatrix lt(l);
-    transpose(lt);
-
-    std::cout << "m:\n" << m << std::endl;
-    std::cout << "l:\n" << l << std::endl;
-    std::cout << "lt:\n" << lt << std::endl;
-    std::cout << "diagonal: " << diagonal << std::endl;
-
-    MpMatrix d(dim, m_shift, ROW_ORIENTED);
-    impose_diagonal(diagonal, d);
-    std::cout << "ld:\n" << l << std::endl;
-
-    MpMatrix ld(dim, m_shift, ROW_ORIENTED);
-    multiply(l, d, ld);
-
-    MpMatrix ldlt(dim, m_shift, ROW_ORIENTED);
-    multiply(ld, lt, ldlt);
-    
-    std::cout << "ldlt:\n" << ldlt << std::endl;
+    demo_multiply(m, dim, m_shift);
 
     return 0;
 }
