@@ -29,7 +29,7 @@ find_package(GSL REQUIRED)
 file(GLOB SOURCES src/*.cpp)
 file(GLOB HEADERS src/*.hpp)
 add_executable(hankelhacker ${SOURCES})
-target_link_libraries(hankelhacker gmp gmpxx gsl)
+target_link_libraries(hankelhacker gmp gmpxx gsl gslcblas)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
