@@ -136,6 +136,18 @@ void the_project(MpMatrix &m) {
     multiply(ltd_inverse, l_inverse, m_inverse);
 
     std::cout << "\nInverse of m:\n" << m_inverse;
+
+    double *m_inverse_as_doubles = new double[dim * dim];
+    to_double_array(m_inverse, m_inverse_as_doubles);
+
+    std::cout << "\nAs doubles:\n";
+    for (size_t i = 0; i < (dim * dim); i++) {
+        if (i > 1 && i % dim == 0) {
+            std::cout << '\n';
+        } 
+        std::cout << m_inverse_as_doubles[i] << '\t';
+    }
+    std::cout << '\n';
 }
 
 int main(int argc, char *argv[]) {

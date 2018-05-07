@@ -269,6 +269,17 @@ namespace momentmp {
         return os;
     }
 
+    inline void to_double_array(const MpMatrix &matrix, double *array) {
+        auto dim = matrix.getDim();
+
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                auto &elem = matrix[i][j];
+                array[i * dim + j] = elem.to_mpf().get_d();
+            }
+        }
+    }
+
     inline void multiply(const MpMatrix &multiplicand, const MpMatrix &multiplier, MpMatrix &product) {
         if (multiplicand.getDim() != multiplier.getDim()) {
             throw std::runtime_error("Unable to multiply MpMatricies of different dimensions");
