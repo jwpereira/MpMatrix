@@ -54,7 +54,7 @@ namespace momentmp {
         }
     }
 
-    inline void extractDiagonal(MpMatrix &src, MpArray &dest, bool replace=true) {
+    inline void extract_diagonal(MpMatrix &src, MpArray &dest, bool replace=true) {
         if (dest.size() != src.getDim()) {
             throw std::runtime_error("Cannot extract to different size array");
         }
@@ -69,6 +69,17 @@ namespace momentmp {
             if (replace) {
                 proc[id] = one;
             }
+        }
+    }
+
+    inline void impose_diagonal(MpArray &diagonal, MpMatrix &dest) {
+        if (diagonal.size() != dest.getDim()) {
+            throw std::runtime_error("Cannot impose diagonal on different dimension matrix");
+        }
+
+        for (auto &proc : dest) {
+            auto id = proc.getId();
+            proc[id] = diagonal[id];
         }
     }
 
