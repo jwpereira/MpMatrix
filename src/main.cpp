@@ -50,6 +50,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     // We'll first take the inverse of L to get L'
     reorient(l);    // first get L into row-oriented form
     invert(l);
+    auto &l_inverse = l;    // for max clarity, for me
     
     MpMatrix lt_inverse(l);
     transpose(lt_inverse);
@@ -57,15 +58,12 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     // Here we're actually inverting the diagonal
     invert_diagonal(diagonal);
     impose_diagonal(diagonal, d);
+    auto &d_inverse = d;    // for max clarity, for me
 
     std::cout << "\nInverted:\n";
-    std::cout << "L':\n" << l;
-    std::cout << "D':\n" << d;
+    std::cout << "L':\n" << l_inverse;
+    std::cout << "D':\n" << d_inverse;
     std::cout << "Lt':\n" << lt_inverse;
-
-    // for max clarity, for me
-    auto &l_inverse = l;
-    auto &d_inverse = d;
 
     // Now multiply together to get inverse of m
     MpMatrix ltd_inverse(dim, shift, ROW_ORIENTED);
