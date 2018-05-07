@@ -240,6 +240,15 @@ namespace momentmp {
             return const_cast<MpArray&>(this->matrix[col]);
         }
 
+        void clear() {
+            auto zero = 0^fmpshift(this->getShift());
+            for (auto &array : *this) {
+                for (auto &elem : array) {
+                    elem = zero;
+                }
+            }
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &mp);
     };
 
