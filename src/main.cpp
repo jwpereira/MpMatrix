@@ -1,5 +1,8 @@
 #include <iostream>
+#include <vector>
+
 #include <gmpxx.h>
+
 #include "demo.hpp"
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
@@ -7,7 +10,7 @@
 
 using namespace momentmp;
 
-void print_matrix(double *matrix, size_t dim) {
+void print_matrix(std::vector<double> &matrix, size_t dim) {
     std::cout << "\nAs doubles:\n";
     for (size_t i = 0; i < (dim * dim); i++) {
         if (i > 1 && i % dim == 0) {
@@ -85,8 +88,8 @@ int main(int argc, char *argv[]) {
 
     inversion(m, m_inverse);
 
-    double *m_inverse_as_doubles = new double[dim * dim];
-    to_double_array(m_inverse, m_inverse_as_doubles);
+    std::vector<double> m_inverse_as_doubles(dim * dim);
+    m_inverse.dump_vec_double(m_inverse_as_doubles);
 
     print_matrix(m_inverse_as_doubles, dim);
 
