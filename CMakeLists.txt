@@ -25,10 +25,11 @@ include(CTest)
 enable_testing()
 
 find_package(GMP REQUIRED)
+find_package(GSL REQUIRED)
 file(GLOB SOURCES src/*.cpp)
 file(GLOB HEADERS src/*.hpp)
 add_executable(hankelhacker ${SOURCES})
-target_link_libraries(hankelhacker gmp gmpxx)
+target_link_libraries(hankelhacker gmp gmpxx gsl)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
