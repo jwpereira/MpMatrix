@@ -85,6 +85,65 @@ void demo_multiply(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
     std::cout << "ldlt:\n" << ldlt << std::endl;
 }
 
+void the_project(MpMatrix &m) {
+    auto dim = m.getDim();
+    auto shift = m.getShift();
+
+    // Initialize the matrix with the seeding function
+    momentInit(m);
+    std::cout << "Original Matrix:\n" << m << '\n';
+
+    // Perform cholesky decomposition on the matrix
+    cholesky_decompose(m);
+    std::cout << "After Cholesky:\n" << m << '\n';
+
+    // All this really does is help me keep the math straight lol
+    auto &l = m;
+
+    // Extract diagonals and impose them onto new matrix. Since we're inverting everything we'll
+    // invert the diagonal here itself.
+    MpArray diagonal(dim, shift);
+    extract_diagonal(m, diagonal);
+    MpMatrix d(dim, shift, ROW_ORIENTED);
+    impose_diagonal(diagonal, d);
+
+    // just for printing purposes:
+    std::cout << "L:\n" << l;
+    std::cout << "D:\n" << d;
+    l.setMode(ROW_ORIENTED);
+    std::cout << "Lt:\n" << l;
+    l.setMode(COL_ORIENTED);
+
+    // We'll first take the inverse of L to get L'
+    reorient(l);    // first get L into row-oriented form
+    invert(l);
+    
+    MpMatrix lt_inverse(l);
+    transpose(lt_inverse);
+
+    // Here we're actually inverting the diagonal
+    invert_diagonal(diagonal);
+    impose_diagonal(diagonal, d);
+
+    std::cout << "\nInverted:\n";
+    std::cout << "L':\n" << l;
+    std::cout << "D':\n" << d;
+    std::cout << "Lt':\n" << lt_inverse;
+
+    // for max clarity, for me
+    auto &l_inverse = l;
+    auto &d_inverse = d;
+
+    // Now multiply together to get inverse of m
+    MpMatrix ltd_inverse(dim, shift, ROW_ORIENTED);
+    multiply(lt_inverse, d_inverse, ltd_inverse);
+
+    MpMatrix m_inverse(dim, shift, ROW_ORIENTED); // m' = (lt)'d'l'
+    multiply(ltd_inverse, l_inverse, m_inverse);
+
+    std::cout << "\nInverse of m:\n" << m_inverse;
+}
+
 int main(int argc, char *argv[]) {
     // Not using printf, therefore no need to have cout sync with stdio ->
     // better performance
@@ -101,13 +160,13 @@ int main(int argc, char *argv[]) {
     //     42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
     // };
 
-    auto dim = 3;
-    MpMatrix m(dim, m_shift);
-    fixedmpz m_raw[] = {
-        4^256_fmpz,     0^256_fmpz,     0^256_fmpz, 
-        12^256_fmpz,    37^256_fmpz,    0^256_fmpz,
-        -(16^256_fmpz), -(43^256_fmpz), 98^256_fmpz 
-    };
+    // auto dim = 3;
+    // MpMatrix m(dim, m_shift);
+    // fixedmpz m_raw[] = {
+    //     4^256_fmpz,     0^256_fmpz,     0^256_fmpz, 
+    //     12^256_fmpz,    37^256_fmpz,    0^256_fmpz,
+    //     -(16^256_fmpz), -(43^256_fmpz), 98^256_fmpz 
+    // };
 
     // size_t dim = 4;
     // MpMatrix m(dim, m_shift);
@@ -118,14 +177,19 @@ int main(int argc, char *argv[]) {
     //     3^256_fmpz, 7^256_fmpz, 4^256_fmpz, 1^256_fmpz
     // };
 
-    for (size_t col = 0; col < dim; col++) {
-        for (size_t row = 0; row < dim; row++) {
-            m[col][row] = m_raw[row * dim + col];
-        }
-    }
+    // for (size_t col = 0; col < dim; col++) {
+    //     for (size_t row = 0; row < dim; row++) {
+    //         m[col][row] = m_raw[row * dim + col];
+    //     }
+    // }
 
     // demo(m, dim, m_shift);
-    demo_multiply(m, dim, m_shift);
+    // demo_multiply(m, dim, m_shift);
+
+    auto dim = 3;
+    MpMatrix m(dim, m_shift);
+
+    the_project(m);
 
     return 0;
 }
