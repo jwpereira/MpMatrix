@@ -4,6 +4,7 @@
 #include <gmpxx.h>
 
 #include "demo.hpp"
+#include "eigen.hpp"
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
 #include "moment_algorithm.hpp"
@@ -24,10 +25,6 @@ void print_matrix(std::vector<double> &matrix, size_t dim) {
 void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     auto dim = m.getDim();
     auto shift = m.getShift();
-
-    // Initialize the matrix with the seeding function
-    momentInit(m);
-    std::cout << "Original Matrix:\n" << m << '\n';
 
     // Perform cholesky decomposition on the matrix
     cholesky_decompose(m);
@@ -84,14 +81,25 @@ int main(int argc, char *argv[]) {
     fmp_shift_t m_shift = 256;
 
     auto dim = 3;
-    MpMatrix m(dim, m_shift, COL_ORIENTED), m_inverse(dim, m_shift, ROW_ORIENTED);
+    MpMatrix source(dim, m_shift, COL_ORIENTED);
+
+    // Initialize the matrix with the seeding function
+    momentInit(source);
+    MpMatrix m(source), m_inverse(dim, m_shift, ROW_ORIENTED); // copy original before it gets changed
+    std::cout << "Original Matrix:\n" << source << '\n';
 
     inversion(m, m_inverse);
 
     std::vector<double> m_inverse_as_doubles(dim * dim);
-    m_inverse.dump_vec_double(m_inverse_as_doubles);
+    m_inverse.dumpVecDouble(m_inverse_as_doubles);
 
     print_matrix(m_inverse_as_doubles, dim);
+
+    double smallest_eigenvalue = get_eigenvalue(m_inverse, SMALLEST);
+    double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(source, LARGEST);
+
+    std::cout << "Smallest eigenvalue: " << smallest_eigenvalue << '\n';
+    std::cout << "Inverse of largest: " << inverse_of_largest_eigenvalue << '\n';
 
     return 0;
 }

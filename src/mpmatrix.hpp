@@ -249,7 +249,7 @@ namespace momentmp {
             }
         }
 
-        void dump_vec_double(std::vector<double> &dest) {
+        void dumpVecDouble(std::vector<double> &dest) const {
             auto dim = this->getDim();
 
             for (size_t i = 0; i < dim; i++) {
@@ -328,6 +328,18 @@ namespace momentmp {
             matrix.setMode(ROW_ORIENTED);
         } else if (mode == ROW_ORIENTED) {
             matrix.setMode(COL_ORIENTED);
+        }
+    }
+
+    inline void reflect(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+
+        for (size_t n = 0; n < (dim - 1); n++) {
+            for (size_t m = (n + 1); m < dim; m++) {
+                auto temp = matrix[m][n];
+                matrix[m][n] = matrix[n][m];
+                // matrix[n][m] = temp;
+            }
         }
     }
 }
