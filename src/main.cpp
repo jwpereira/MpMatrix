@@ -58,7 +58,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     transpose(lt_inverse);
 
     // Here we're actually inverting the diagonal
-    invert_diagonal(diagonal);
+    //invert_diagonal(diagonal);
     impose_diagonal(diagonal, d);
     auto &d_inverse = d;    // for max clarity, for me
 
@@ -68,13 +68,28 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     // std::cout << "Lt':\n" << lt_inverse;
 
     // Now multiply together to get inverse of m
-    MpMatrix ltd_inverse(dim, shift, ROW_ORIENTED);
-    multiply(lt_inverse, d_inverse, ltd_inverse);
+    // MpMatrix ltd_inverse(dim, shift, ROW_ORIENTED);
+    // multiply(lt_inverse, d_inverse, ltd_inverse);
 
-    // std::cout << "lt * d:\n";
-    // std::cout << ltd_inverse;
+    // // std::cout << "lt * d:\n";
+    // // std::cout << ltd_inverse;
 
-    multiply(ltd_inverse, l_inverse, m_inverse);    // m' = (lt)'d'l'
+    // multiply(ltd_inverse, l_inverse, m_inverse);    // m' = (lt)'d'l'
+
+    auto zero = 0^fmpshift(shift);
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t j = 0; j < dim; j++) {
+            if (i < 10 && j < 10) {
+                auto sum = zero;
+                for (size_t k = 0; k < dim; k++) {
+                    sum += lt_inverse[i][k] * l_inverse[k][j] / d[k][k];
+                }
+                m_inverse[i][j] = sum;
+            } else {
+                m_inverse[i][j] = zero;
+            }
+        }
+    }
 
     // std::cout << "\nInverse of m:\n" << m_inverse;
 }
@@ -99,7 +114,7 @@ int main(int argc, char *argv[]) {
     std::vector<double> m_inverse_as_doubles(dim * dim);
     m_inverse.dumpVecDouble(m_inverse_as_doubles);
 
-    // print_matrix(m_inverse_as_doubles, dim);
+    print_matrix(m_inverse_as_doubles, dim);
 
     // double smallest_eigenvalue = get_eigenvalue(source, SMALLEST);
     double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
