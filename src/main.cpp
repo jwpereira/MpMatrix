@@ -78,10 +78,19 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
-    auto start_time = std::chrono::high_resolution_clock::now();
+    if (argc < 3) {
+        std::cerr << "Error: Missing arguments.\n";
+        std::cerr << "Usage: hankelhacker <dimension of source> <shift amount>\n";
+        return -1;
+    }
 
-    fmp_shift_t m_shift = 4096;
-    auto dim = 200;
+    auto dim = strtoul(argv[1], NULL, 10);
+    fmp_shift_t m_shift = strtoul(argv[2], NULL, 10);
+
+    std::cerr << "Size of matrix: " << dim << " by " << dim << "\n";
+    std::cerr << "Shift: " << m_shift << "\n";
+
+    auto start_time = std::chrono::high_resolution_clock::now();
     MpMatrix source(dim, m_shift, COL_ORIENTED);
 
     // Initialize the matrix with the seeding function
