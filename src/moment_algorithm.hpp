@@ -19,6 +19,7 @@ namespace momentmp {
     }
 
     inline void momentInit(MpMatrix &matrix) {
+        #pragma omp parallel for schedule(dynamic, 1)
         for (auto it = matrix.begin(); it < matrix.end(); it++) {
             momentInitCol(*it);
         }
