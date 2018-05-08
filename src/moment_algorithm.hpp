@@ -42,6 +42,7 @@ namespace momentmp {
             }
 
             // Apply procCol to all other columns to its right
+            #pragma omp parallel for schedule(dynamic, 1)
             for (size_t col = start; col < dim; col++) {
                 MpArray &destCol = matrix[col];
 
