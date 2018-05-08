@@ -87,8 +87,8 @@ int main(int argc, char *argv[]) {
     auto dim = strtoul(argv[1], NULL, 10);
     fmp_shift_t m_shift = strtoul(argv[2], NULL, 10);
 
-    std::cerr << "Size of matrix: " << dim << " by " << dim << "\n";
-    std::cerr << "Shift: " << m_shift << "\n";
+    std::cout << "Size of matrix: " << dim << " by " << dim << "\n";
+    std::cout << "Shift: " << m_shift << "\n";
 
     auto start_time = std::chrono::high_resolution_clock::now();
     MpMatrix source(dim, m_shift, COL_ORIENTED);
