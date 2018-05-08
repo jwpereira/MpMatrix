@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 
 #include <gmpxx.h>
@@ -57,7 +58,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     transpose(lt_inverse);
     if (DEBUG) std::cerr << "done!\n";
 
-    if (DEBUG) std::cerr << "Creating first" << INV_DIM << "x" << INV_DIM << "of inverse of M... ";
+    if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
     auto zero = 0^fmpshift(shift);
     for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
         for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
@@ -78,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     fmp_shift_t m_shift = 4096;
 
-    auto dim = 500;
+    auto dim = 200;
     MpMatrix source(dim, m_shift, COL_ORIENTED);
 
     // Initialize the matrix with the seeding function
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
     if (DEBUG) std::cerr << "done!\n";
 
     // std::cout << "Smallest eigenvalue: " << smallest_eigenvalue << '\n';
-    std::cout << "Inverse of largest: " << inverse_of_largest_eigenvalue << '\n';
+    std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
 
     return 0;
 }
