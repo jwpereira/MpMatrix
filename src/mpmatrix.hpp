@@ -1,8 +1,11 @@
 #pragma once
 
 #include <iostream>
-#include <gmpxx.h>
 #include <vector>
+
+#include <gmpxx.h>
+#include <omp.h>
+
 #include "fixedmpz.hpp"
 
 /**
@@ -308,6 +311,7 @@ namespace momentmp {
     inline void transpose(MpMatrix &matrix) {
         auto dim = matrix.getDim();
 
+        #pragma omp parallel for schedule(dynamic, 1)
         for (size_t n = 0; n < (dim - 1); n++) {
             for (size_t m = (n + 1); m < dim; m++) {
                 auto temp = matrix[m][n];
