@@ -39,17 +39,8 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     // invert the diagonal here itself.
     MpArray diagonal(dim, shift);
     extract_diagonal(m, diagonal);
-    MpMatrix d(dim, shift, ROW_ORIENTED);
-    impose_diagonal(diagonal, d);
 
     std::cout << "last_diagonal: " << diagonal[diagonal.size() - 1] << std::endl;
-
-    // // just for printing purposes:
-    // std::cout << "L:\n" << l;
-    // std::cout << "D:\n" << d;
-    // l.setMode(ROW_ORIENTED);
-    // std::cout << "Lt:\n" << l;
-    // l.setMode(COL_ORIENTED);
 
     // We'll first take the inverse of L to get L'
     reorient(l);    // first get L into row-oriented form
@@ -58,25 +49,6 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     
     MpMatrix lt_inverse(l);
     transpose(lt_inverse);
-
-    // Here we're actually inverting the diagonal
-    //invert_diagonal(diagonal);
-    impose_diagonal(diagonal, d);
-    auto &d_inverse = d;    // for max clarity, for me
-
-    // std::cout << "\nInverted:\n";
-    // std::cout << "L':\n" << l_inverse;
-    // std::cout << "D':\n" << d_inverse;
-    // std::cout << "Lt':\n" << lt_inverse;
-
-    // Now multiply together to get inverse of m
-    // MpMatrix ltd_inverse(dim, shift, ROW_ORIENTED);
-    // multiply(lt_inverse, d_inverse, ltd_inverse);
-
-    // // std::cout << "lt * d:\n";
-    // // std::cout << ltd_inverse;
-
-    // multiply(ltd_inverse, l_inverse, m_inverse);    // m' = (lt)'d'l'
 
     auto zero = 0^fmpshift(shift);
     for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
@@ -88,8 +60,6 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
             m_inverse[i][j] = sum;
         }
     }
-
-    // std::cout << "\nInverse of m:\n" << m_inverse;
 }
 
 int main(int argc, char *argv[]) {
