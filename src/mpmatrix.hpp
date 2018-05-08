@@ -1,11 +1,11 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <gmpxx.h>
 #include <vector>
+
+#include <gmpxx.h>
+#include <omp.h>
+
 #include "fixedmpz.hpp"
 
 /**
@@ -240,6 +240,26 @@ namespace momentmp {
             return const_cast<MpArray&>(this->matrix[col]);
         }
 
+        void clear() {
+            auto zero = 0^fmpshift(this->getShift());
+            for (auto &array : *this) {
+                for (auto &elem : array) {
+                    elem = zero;
+                }
+            }
+        }
+
+        void dumpVecDouble(std::vector<double> &dest) const {
+            auto dim = this->getDim();
+
+            for (size_t i = 0; i < dim; i++) {
+                for (size_t j = 0; j < dim; j++) {
+                    auto &elem = matrix[i][j];
+                    dest[i * dim + j] = elem.to_mpf().get_d();
+                }
+            }
+        }
+
         friend std::ostream &operator<<(std::ostream &os, const MpMatrix &mp);
     };
 
@@ -291,6 +311,7 @@ namespace momentmp {
     inline void transpose(MpMatrix &matrix) {
         auto dim = matrix.getDim();
 
+        #pragma omp parallel for schedule(dynamic, 1)
         for (size_t n = 0; n < (dim - 1); n++) {
             for (size_t m = (n + 1); m < dim; m++) {
                 auto temp = matrix[m][n];
@@ -308,6 +329,18 @@ namespace momentmp {
             matrix.setMode(ROW_ORIENTED);
         } else if (mode == ROW_ORIENTED) {
             matrix.setMode(COL_ORIENTED);
+        }
+    }
+
+    inline void reflect(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+
+        for (size_t n = 0; n < (dim - 1); n++) {
+            for (size_t m = (n + 1); m < dim; m++) {
+                auto temp = matrix[m][n];
+                matrix[m][n] = matrix[n][m];
+                // matrix[n][m] = temp;
+            }
         }
     }
 }

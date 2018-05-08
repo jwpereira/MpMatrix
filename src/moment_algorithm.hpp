@@ -1,5 +1,7 @@
 #pragma once
 
+#include <omp.h>
+
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
 
@@ -19,7 +21,10 @@ namespace momentmp {
     }
 
     inline void momentInit(MpMatrix &matrix) {
-        std::for_each(matrix.begin(), matrix.end(), momentInitCol);
+        #pragma omp parallel for schedule(dynamic, 1)
+        for (auto it = matrix.begin(); it < matrix.end(); it++) {
+            momentInitCol(*it);
+        }
     }
 
     inline void cholesky_decompose(MpMatrix &matrix) {
@@ -39,14 +44,15 @@ namespace momentmp {
             }
 
             // Apply procCol to all other columns to its right
+            #pragma omp parallel for schedule(dynamic, 1)
             for (size_t col = start; col < dim; col++) {
                 MpArray &destCol = matrix[col];
 
                 // Going down the rows for each col, z' = z - yx
                 for (size_t row = col; row < dim; row++) {
                     auto &z = destCol[row];
-                    auto &y = orig[col];
-                    auto &x = procCol[row];
+                    const auto &y = orig[col];
+                    const auto &x = procCol[row];
 
                     z = z - (y * x);
                 }
@@ -91,6 +97,7 @@ namespace momentmp {
             auto id = procRow.getId();
             auto start = id + 1;
 
+            #pragma omp parallel for schedule(dynamic, 1)
             for (size_t row = start; row < dim; row++) {
                 auto &destRow = matrix[row];
                 auto scale = destRow[id];
@@ -110,8 +117,12 @@ namespace momentmp {
         auto shift = fmpshift(diagonal.getShift());
         auto one = 1^shift;
 
-        std::for_each(diagonal.begin(), diagonal.end(), [&](auto &element) {
-            element = one / element;
-        });
+        // std::for_each(diagonal.begin(), diagonal.end(), [&](auto &element) {
+        //     element = one / element;
+        // });
+
+        for (auto &elem : diagonal) {
+            elem = one / elem;
+        }
     }
 }
