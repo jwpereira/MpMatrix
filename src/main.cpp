@@ -11,6 +11,8 @@
 
 using namespace momentmp;
 
+const size_t INV_DIM = 10;
+
 void print_matrix(std::vector<double> &matrix, size_t dim) {
     std::cout << "\nAs doubles:\n";
     for (size_t i = 0; i < (dim * dim); i++) {
@@ -77,17 +79,13 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     // multiply(ltd_inverse, l_inverse, m_inverse);    // m' = (lt)'d'l'
 
     auto zero = 0^fmpshift(shift);
-    for (size_t i = 0; i < dim; i++) {
-        for (size_t j = 0; j < dim; j++) {
-            if (i < 10 && j < 10) {
-                auto sum = zero;
-                for (size_t k = 0; k < dim; k++) {
-                    sum += lt_inverse[i][k] * l_inverse[k][j] / d[k][k];
-                }
-                m_inverse[i][j] = sum;
-            } else {
-                m_inverse[i][j] = zero;
+    for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
+        for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
+            auto sum = zero;
+            for (size_t k = 0; k < dim; k++) {
+                sum += lt_inverse[i][k] * l_inverse[k][j] / diagonal[k];
             }
+            m_inverse[i][j] = sum;
         }
     }
 
@@ -106,15 +104,15 @@ int main(int argc, char *argv[]) {
 
     // Initialize the matrix with the seeding function
     momentInit(source);
-    MpMatrix m(source), m_inverse(dim, m_shift, ROW_ORIENTED); // copy original before it gets changed
+    MpMatrix m(source), m_inverse(INV_DIM, m_shift, ROW_ORIENTED); // copy original before it gets changed
     // std::cout << "Original Matrix:\n" << source << '\n';
 
     inversion(m, m_inverse);
 
-    std::vector<double> m_inverse_as_doubles(dim * dim);
-    m_inverse.dumpVecDouble(m_inverse_as_doubles);
+    std::vector<double> m_inverse_section_as_doubles(INV_DIM * INV_DIM);
+    m_inverse.dumpVecDouble(m_inverse_section_as_doubles);
 
-    print_matrix(m_inverse_as_doubles, dim);
+    print_matrix(m_inverse_section_as_doubles, INV_DIM);
 
     // double smallest_eigenvalue = get_eigenvalue(source, SMALLEST);
     double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
