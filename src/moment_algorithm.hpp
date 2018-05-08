@@ -19,7 +19,9 @@ namespace momentmp {
     }
 
     inline void momentInit(MpMatrix &matrix) {
-        std::for_each(matrix.begin(), matrix.end(), momentInitCol);
+        for (auto it = matrix.begin(); it < matrix.end(); it++) {
+            momentInitCol(*it);
+        }
     }
 
     inline void cholesky_decompose(MpMatrix &matrix) {
@@ -45,8 +47,8 @@ namespace momentmp {
                 // Going down the rows for each col, z' = z - yx
                 for (size_t row = col; row < dim; row++) {
                     auto &z = destCol[row];
-                    auto &y = orig[col];
-                    auto &x = procCol[row];
+                    const auto &y = orig[col];
+                    const auto &x = procCol[row];
 
                     z = z - (y * x);
                 }
