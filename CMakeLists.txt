@@ -3,6 +3,16 @@ project(hankelhacker VERSION 0.0.0)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+set(CMAKE_VERBOSE_MAKEFILE on)
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
 set (CMAKE_CXX_STANDARD 17)
 
