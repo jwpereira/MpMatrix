@@ -30,36 +30,37 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     auto dim = m.getDim();
     auto shift = m.getShift();
 
-    if (DEBUG) std::cerr << "Cholesky-decompose input matrix... ";
+        if (DEBUG) std::cerr << "Cholesky-decompose input matrix... ";
     // Perform cholesky decomposition on the matrix
     cholesky_decompose(m);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
     // All this really does is help me keep the math straight lol
     auto &l = m;
 
     // Extract diagonals and impose them onto new matrix. Since we're inverting everything we'll
     // invert the diagonal here itself.
-    if (DEBUG) std::cerr << "Extracting diagonals... ";
+        if (DEBUG) std::cerr << "Extracting diagonals... ";
     MpArray diagonal(dim, shift);
     extract_diagonal(m, diagonal);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
     std::cout << "last diagonal: " << diagonal[diagonal.size() - 1] << std::endl;
 
     // We'll first take the inverse of L to get L'
-    if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
-    reorient(l);    if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
-    if (DEBUG) std::cerr << "Inverting L to get L'... ";
+        if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
+    reorient(l);    
+        if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
+        if (DEBUG) std::cerr << "Inverting L to get L'... ";
     invert(l);      if (DEBUG) std::cerr << "done!\n";
     auto &l_inverse = l;    // for max clarity, for me
     
-    if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
+        if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
     MpMatrix lt_inverse(l);
     transpose(lt_inverse);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
-    if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
+        if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
     auto zero = 0^fmpshift(shift);
     for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
         for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
@@ -70,7 +71,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
             m_inverse[i][j] = sum;
         }
     }
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -91,20 +92,20 @@ int main(int argc, char *argv[]) {
     std::cout << "Shift: " << m_shift << "\n";
 
     auto start_time = std::chrono::high_resolution_clock::now();
-    MpMatrix source(dim, m_shift, COL_ORIENTED);
+    MpMatrix m(dim, m_shift, COL_ORIENTED);
 
     // Initialize the matrix with the seeding function
-    if (DEBUG) std::cerr << "Generating source matrix... ";
-    momentInit(source);
-    MpMatrix m(source), m_inverse(INV_DIM, m_shift, ROW_ORIENTED); // copy original before it gets changed
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "Generating source matrix... ";
+    momentInit(m);
+    MpMatrix m_inverse(INV_DIM, m_shift, ROW_ORIENTED); 
+        if (DEBUG) std::cerr << "done!\n";
 
-    if (DEBUG) std::cerr << "Finding inverse of source matrix:\n";
+        if (DEBUG) std::cerr << "Finding inverse of source matrix:\n";
     inversion(m, m_inverse);
 
-    if (DEBUG) std::cerr << "Extracting largest eigenvalue... ";
+        if (DEBUG) std::cerr << "Extracting largest eigenvalue... ";
     double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
     std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
 
