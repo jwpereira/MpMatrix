@@ -49,9 +49,9 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
 
     // We'll first take the inverse of L to get L'
     if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
-    reorient(l);    if (DEBUG) std::cout << "done!\n";    // first get L into row-oriented form    
+    reorient(l);    if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
     if (DEBUG) std::cerr << "Inverting L to get L'... ";
-    invert(l);      if (DEBUG) std::cout << "done!\n";
+    invert(l);      if (DEBUG) std::cerr << "done!\n";
     auto &l_inverse = l;    // for max clarity, for me
     
     if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
