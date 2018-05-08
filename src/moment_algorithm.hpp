@@ -1,5 +1,7 @@
 #pragma once
 
+#include <omp.h>
+
 #include "fixedmpz.hpp"
 #include "mpmatrix.hpp"
 
@@ -95,6 +97,7 @@ namespace momentmp {
             auto id = procRow.getId();
             auto start = id + 1;
 
+            #pragma omp parallel for schedule(dynamic, 1)
             for (size_t row = start; row < dim; row++) {
                 auto &destRow = matrix[row];
                 auto scale = destRow[id];
