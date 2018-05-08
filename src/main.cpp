@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -77,8 +78,9 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
-    fmp_shift_t m_shift = 4096;
+    auto start_time = std::chrono::high_resolution_clock::now();
 
+    fmp_shift_t m_shift = 4096;
     auto dim = 200;
     MpMatrix source(dim, m_shift, COL_ORIENTED);
 
@@ -96,6 +98,10 @@ int main(int argc, char *argv[]) {
     if (DEBUG) std::cerr << "done!\n";
 
     std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
+
+    auto finish_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = finish_time - start_time;
+    std::cerr << "Completed in " << elapsed_time.count() << " seconds\n";
 
     return 0;
 }
