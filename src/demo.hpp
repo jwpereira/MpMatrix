@@ -1,3 +1,12 @@
+/**
+ * @brief This file is just a demo for random functionality.
+ *
+ * Maybe it'll have its use some day, but now is not its time.
+ *
+ * @file demo.hpp
+ * @author jwpereira
+ */
+
 #pragma once
 
 #include <iostream>
@@ -8,7 +17,7 @@
 
 using namespace momentmp;
 
-void demo(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
+void demo(MpMatrix &m, size_t dim, fmpz_shift_t m_shift) {
     std::cout << "original:\n";
     std::cout << m;
 
@@ -50,7 +59,7 @@ void demo(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
     std::cout << diagonals;
 }
 
-void demo_multiply(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
+void demo_multiply(MpMatrix &m, size_t dim, fmpz_shift_t m_shift) {
     MpMatrix l(m);
     cholesky_decompose(l);
     std::cout << "cholesky ld:\n" << l << std::endl;
@@ -77,6 +86,6 @@ void demo_multiply(MpMatrix &m, size_t dim, fmp_shift_t m_shift) {
 
     MpMatrix ldlt(dim, m_shift, ROW_ORIENTED);
     multiply(ld, lt, ldlt);
-    
+
     std::cout << "ldlt:\n" << ldlt << std::endl;
 }

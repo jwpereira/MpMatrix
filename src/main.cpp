@@ -1,3 +1,12 @@
+/**
+ * @brief Main driver file for the entire HankelHacker project
+ * 
+ * This file puts it all together.
+ * 
+ * @file main.cpp
+ * @author jwpereira
+ */
+
 #include <chrono>
 #include <iostream>
 #include <iomanip>
@@ -90,7 +99,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
 
     // Calculate out the first 10x10 (or INV_DIMxINV_DIM) of the inverse of the source matrix
         if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
-    auto zero = 0^fmpshift(shift);
+    auto zero = 0^fmpzshift(shift);
     for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
         for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
             auto sum = zero;
@@ -115,7 +124,7 @@ int main(int argc, char *argv[]) {
     }
 
     auto dim = strtoul(argv[1], NULL, 10);
-    fmp_shift_t m_shift = strtoul(argv[2], NULL, 10);
+    fmpz_shift_t m_shift = strtoul(argv[2], NULL, 10);
 
     std::cout << "Size of matrix: " << dim << " by " << dim << "\n";
     std::cout << "Shift: " << m_shift << "\n";
