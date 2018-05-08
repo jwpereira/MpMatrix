@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 
     auto finish_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_time = finish_time - start_time;
-    std::cerr << "Completed in " << elapsed_time.count() << " seconds\n";
+    std::cout << "Completed in " << elapsed_time.count() << " seconds\n";
 
     return 0;
 }
