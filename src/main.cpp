@@ -95,7 +95,6 @@ int main(int argc, char *argv[]) {
     double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
     if (DEBUG) std::cerr << "done!\n";
 
-    // std::cout << "Smallest eigenvalue: " << smallest_eigenvalue << '\n';
     std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
 
     return 0;
