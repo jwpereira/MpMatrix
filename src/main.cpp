@@ -1,16 +1,76 @@
+#include <chrono>
 #include <iostream>
+#include <iomanip>
+#include <vector>
+
 #include <gmpxx.h>
+
+#include "demo.hpp"
+#include "eigen.hpp"
 #include "fixedmpz.hpp"
-#include "mpmatrix_algorithm.hpp"
 #include "mpmatrix.hpp"
-#include "prettymp.hpp"
+#include "moment_algorithm.hpp"
 
 using namespace momentmp;
 
-bool sample_gen_ij(fmp_t &dest, size_t i, size_t j) {
-    auto shift = fmpshift(dest.getShift());
-    dest = ((i+1)^shift) / ((j+1)^shift);
-    return true;
+const size_t INV_DIM = 10;
+const bool DEBUG = true;
+
+void print_matrix(std::vector<double> &matrix, size_t dim) {
+    for (size_t i = 0; i < (dim * dim); i++) {
+        if (i > 1 && i % dim == 0) {
+            std::cout << '\n';
+        } 
+        std::cout << matrix[i] << '\t';
+    }
+    std::cout << '\n';
+}
+
+void inversion(MpMatrix &m, MpMatrix &m_inverse) {
+    auto dim = m.getDim();
+    auto shift = m.getShift();
+
+    if (DEBUG) std::cerr << "Cholesky-decompose input matrix... ";
+    // Perform cholesky decomposition on the matrix
+    cholesky_decompose(m);
+    if (DEBUG) std::cerr << "done!\n";
+
+    // All this really does is help me keep the math straight lol
+    auto &l = m;
+
+    // Extract diagonals and impose them onto new matrix. Since we're inverting everything we'll
+    // invert the diagonal here itself.
+    if (DEBUG) std::cerr << "Extracting diagonals... ";
+    MpArray diagonal(dim, shift);
+    extract_diagonal(m, diagonal);
+    if (DEBUG) std::cerr << "done!\n";
+
+    std::cout << "last diagonal: " << diagonal[diagonal.size() - 1] << std::endl;
+
+    // We'll first take the inverse of L to get L'
+    if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
+    reorient(l);    if (DEBUG) std::cout << "done!\n";    // first get L into row-oriented form    
+    if (DEBUG) std::cerr << "Inverting L to get L'... ";
+    invert(l);      if (DEBUG) std::cout << "done!\n";
+    auto &l_inverse = l;    // for max clarity, for me
+    
+    if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
+    MpMatrix lt_inverse(l);
+    transpose(lt_inverse);
+    if (DEBUG) std::cerr << "done!\n";
+
+    if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
+    auto zero = 0^fmpshift(shift);
+    for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
+        for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
+            auto sum = zero;
+            for (size_t k = 0; k < dim; k++) {
+                sum += lt_inverse[i][k] * l_inverse[k][j] / diagonal[k];
+            }
+            m_inverse[i][j] = sum;
+        }
+    }
+    if (DEBUG) std::cerr << "done!\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -18,64 +78,39 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
-    size_t m_dim = 4;
-    fmp_shift_t m_shift = 256;
-    fixedmpz m_raw[] = {
-        18^256_fmpz, 22^256_fmpz,  54^256_fmpz,  42^256_fmpz,  
-        22^256_fmpz, 70^256_fmpz,  86^256_fmpz,  62^256_fmpz,
-        54^256_fmpz, 86^256_fmpz, 174^256_fmpz, 134^256_fmpz, 
-        42^256_fmpz, 62^256_fmpz, 134^256_fmpz, 106^256_fmpz
-    };
+    if (argc < 3) {
+        std::cerr << "Error: Missing arguments.\n";
+        std::cerr << "Usage: hankelhacker <dimension of source> <shift amount>\n";
+        return -1;
+    }
 
-    MpMatrix m(m_dim, m_shift, m_raw, (m_raw + (m_dim * m_dim)));
+    auto dim = strtoul(argv[1], NULL, 10);
+    fmp_shift_t m_shift = strtoul(argv[2], NULL, 10);
 
-    std::cout << "Before:\n";
-    std::cout << m << std::endl;
+    std::cerr << "Size of matrix: " << dim << " by " << dim << "\n";
+    std::cerr << "Shift: " << m_shift << "\n";
 
-    MpMatrix m_cholesky = cholesky(m);
+    auto start_time = std::chrono::high_resolution_clock::now();
+    MpMatrix source(dim, m_shift, COL_ORIENTED);
 
-    std::cout << "Debug:\n";
-    std::cout << PrecPrint(m_cholesky, (64 >> 2));
+    // Initialize the matrix with the seeding function
+    if (DEBUG) std::cerr << "Generating source matrix... ";
+    momentInit(source);
+    MpMatrix m(source), m_inverse(INV_DIM, m_shift, ROW_ORIENTED); // copy original before it gets changed
+    if (DEBUG) std::cerr << "done!\n";
 
-    MpMatrix m_i_over_j(m_dim, m_shift);
-    apply(m_i_over_j, sample_gen_ij);
+    if (DEBUG) std::cerr << "Finding inverse of source matrix:\n";
+    inversion(m, m_inverse);
 
-    std::cout << PrecPrint(m_i_over_j, 12);   
+    if (DEBUG) std::cerr << "Extracting largest eigenvalue... ";
+    double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
+    if (DEBUG) std::cerr << "done!\n";
 
-    MpMatrix m_i_plus_j(m_dim, m_shift);
-    apply(m_i_plus_j, [](auto &fmp, auto i, auto j) {
-        auto shift = fmpshift(fmp.getShift());
-        fmp = (i^shift) + (j^shift);
-        return true;
-    }); 
+    std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
 
-    MpMatrix m_i_plus_j_1 = m_i_plus_j;
-    m_i_plus_j_1 += m_i_plus_j;
-
-    std::cout << PrecPrint(m_i_plus_j, 12); 
-    std::cout << PrecPrint(m_i_plus_j_1, 12); 
-
-    MpMatrix i4(m_dim, m_shift);
-    apply(i4, identity);
-
-    auto also_miplusj = m_i_plus_j * i4;
-    std::cout << also_miplusj << std::endl;
-    std::cout << "m\n";
-    std::cout << m;
-    std::cout << "m + 10\n";
-    std::cout << (m + (10^fmpshift(m_shift)));
-    std::cout << "m - 10\n";
-    std::cout << (m - (10^fmpshift(m_shift)));
-    std::cout << "m * 10\n";
-    std::cout << (m * (10^fmpshift(m_shift)));
-
-    MpMatrix m_cholesky_transpose = transpose(m_cholesky);
-
-    std::cout << "m_cholesky_transpose:\n";
-    std::cout << m_cholesky_transpose;
-
-    std::cout << "m_cholesky * m_cholesky_transpose\n";
-    std::cout << m_cholesky * m_cholesky_transpose << std::endl;
+    auto finish_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = finish_time - start_time;
+    std::cerr << "Completed in " << elapsed_time.count() << " seconds\n";
 
     return 0;
 }

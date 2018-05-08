@@ -1,11 +1,11 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <iomanip>
-#include <gmpxx.h>
 #include <vector>
+
+#include <gmpxx.h>
+#include <omp.h>
+
 #include "fixedmpz.hpp"
 
 /**
@@ -18,95 +18,160 @@ namespace momentmp {
     using fmp_t = fixedmpz; ///< convenience alias to the underlying number type used for operations
     using fmp_shift_t = fmp_shift_t;   ///< alias to the scaling type really used for fixedmpz
 
-    /**
-     * @brief Matrix class based class focused on containing and fmp_t elements.
-     *
-     * MpMatrix is a square-matrix container-wrapper for fmp_t elements. It allows for individual
-     * elements in the underlying container to be accessed using a reasonable syntax (i.e.,
-     * <code>name_of_matrix(row, col)</code>).
-     */
-    class MpMatrix {
+    class MpArray {
       private:
-        std::vector<fmp_t> matrix;
-        size_t dim;       ///< dimension * dimension = size [we're working with square matricies]
-        fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
+        std::vector<fmp_t> col;
+        size_t dim, id;
+        fmp_shift_t shift;
       public:
-        /**
-         * @brief Construct a new MpMatrix object
-         * 
-         * @param dim Size of the matrix (n for an n*n matrix)
-         * @param shift Amount each of the elements are. Per \link fixedmpz \endlink
-         */
-        MpMatrix(size_t dim, fmp_shift_t shift) : dim(dim), shift(shift) {
-            this->matrix = std::vector<fmp_t>(dim * dim, fmp_t(0, shift));
+        MpArray(size_t dim, fmp_shift_t shift, size_t id=-1) noexcept 
+                : dim(dim), id(id), shift(shift) {
+            this->col = std::vector<fmp_t>(dim, fmp_t(0, shift));
+        }
+
+        MpArray(const MpArray &other) = default;
+        MpArray(MpArray &&other) = default;
+        
+        size_t getId() {
+            return this->id;
+        }
+
+        size_t getId() const {
+            return this->id;
+        }
+
+        size_t size() {
+            return this->dim;
+        }
+        
+        size_t size() const {
+            return this->dim;
+        }
+
+        fmp_shift_t getShift() {
+            return this->shift;
+        }
+
+        fmp_shift_t getShift() const {
+            return this->shift;
+        }
+
+        void setId(size_t id) {
+            this->id = id;
+        }
+
+        fmp_t &operator[](size_t row) {
+            return this->col[row];
+        }
+
+        fmp_t &operator[](size_t row) const {
+            return const_cast<fmp_t&>(this->col[row]);
         }
 
         /**
-         * @brief Construct a new MpMatrix object
-         *
-         * Consider this like a copy constructor using Iterators (so as to allow loading data into
-         * MpMatrix from other containers/means). For example: for testing purposes, one could make
-         * a raw array of \link fixedmpz \endlink objects (such that the array is of an n*n square
-         * matrix) and have an MpMatrix object be created from that. 
-         *
-         * @param dim Size of the matrix (n for an n*n matrix)
-         * @param shift Amount each of the elements are. Per \link fixedmpz \endlink
-         * @param begin Iterator from where copying starts
-         * @param end Iterator from where copying ends
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
          */
-        template <typename Iterator>
-        MpMatrix(size_t dim, fmp_shift_t shift, Iterator begin, Iterator end) : MpMatrix(dim, shift) {
-            //std::copy(begin, end, this->matrix.begin());
-            auto iter = this->matrix.begin();
-            std::for_each(begin, end, [&](auto &val) {
-                iter->setNumber(val);
-                iter->setshift(val.getShift());
-                iter++;
-            });
+        decltype(auto) begin() {
+            return this->col.begin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) begin() const {
+            return this->col.begin();
+        }
+
+        /**
+         * @brief Returns a constant begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cbegin() const {
+            return this->col.cbegin();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() {
+            return this->col.end();
+        }
+
+        /**
+         * @brief Returns a begin() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) end() const {
+            return this->col.end();
+        }
+
+        /**
+         * @brief Returns a constant end() iterator from the internal vector class.
+         * 
+         * @return decltype(auto) 
+         */
+        decltype(auto) cend() const {
+            return this->col.cend();
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, MpArray &array);
+    };
+
+    inline std::ostream &operator<<(std::ostream &os, MpArray &array) {
+        for (auto &e : array) {
+            os << e << ' ';
+        }
+
+        return os << std::endl;
+    }
+
+    enum MpMatrixMode : bool { ROW_ORIENTED=true , COL_ORIENTED=false };
+
+    class MpMatrix {
+      private:
+        std::vector<MpArray> matrix;
+        size_t dim;         ///< dimension * dimension = rows [we're working with square matricies]
+        fmp_shift_t shift;  ///< for keeping track of the shift/precision factor across the matrix
+        MpMatrixMode mode;
+      public:
+        MpMatrix(size_t dim, fmp_shift_t shift, MpMatrixMode mode = COL_ORIENTED) noexcept 
+                : dim(dim),  shift(shift) {
+            this->matrix = std::vector<MpArray>(dim, MpArray(dim, shift, 0));
+            for (size_t i = 0; i < dim; i++) {
+                this->matrix[i].setId(i);
+            }
+            this->mode = mode;
         }
 
         MpMatrix(const MpMatrix &other) = default;
         MpMatrix(MpMatrix &&other) = default;
 
-        /**
-         * @brief Returns a reference to the fmp_t element at position (row, col).
-         * 
-         * Operator overload for () allows for easy access to elements inside the matrix using 
-         * an intuitive syntax that is close to MpMatrix[row][col].
-         * 
-         * @param row The row where the element is located.
-         * @param col The column where the element is located. 
-         * @return fmp_t& The address of the element at position (row, col).
-         */
-        fmp_t &operator()(const size_t row, const size_t col) {
-            return this->matrix[(row * this->dim) + col];
-        }
-        
-        /**
-         * @brief This is a const version of <code>&operator()</code>
-         */
-        fmp_t &operator()(const size_t row, const size_t col) const {
-            return const_cast<fmp_t&>(this->matrix[(row * this->dim) + col]);
+        size_t getDim() {
+            return this->dim;
         }
 
-        /**
-         * @brief Get the amount the fmp_t elements are shifted by
-         * 
-         * @return The shift amount.
-         */
+        size_t getDim() const {
+            return this->dim;
+        }
+
+        fmp_shift_t getShift() {
+            return this->shift;
+        }
+
         fmp_shift_t getShift() const {
             return this->shift;
         }
 
-        /**
-         * @brief Get the n-dimension of the matrix
-         * 
-         * For an n*n square matrix (for which \link MpMatrix \endlink represents), this returns n.
-         * 
-         * @return size_t n-dimension
-         */
-        size_t getDimension() const {
-            return this->dim;
+        decltype(auto) getMode() const {
+            return this->mode;
         }
 
         /**
@@ -163,132 +228,119 @@ namespace momentmp {
             return this->matrix.cend();
         }
 
-        MpMatrix &operator=(const MpMatrix &other) = default;
-        MpMatrix &operator=(MpMatrix &&other) = default;
+        void setMode(MpMatrixMode mode) {
+            this->mode = mode;
+        }
 
-        MpMatrix &operator+=(const MpMatrix &addend) {
-            if (addend.dim != this->dim) {
-                throw std::runtime_error("Unable to add together matricies of different dimensions");
+        MpArray &operator[](const size_t col) {
+            return this->matrix[col];
+        }
+
+        MpArray &operator[](const size_t col) const {
+            return const_cast<MpArray&>(this->matrix[col]);
+        }
+
+        void clear() {
+            auto zero = 0^fmpshift(this->getShift());
+            for (auto &array : *this) {
+                for (auto &elem : array) {
+                    elem = zero;
+                }
             }
-            
-            std::transform(this->begin(), this->end(), addend.cbegin(), this->begin(), std::plus<fmp_t>());
-
-            return *this;
         }
 
-        MpMatrix &operator+=(const fmp_t &addend) {
-            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
-                fmp += addend;
-            });
-
-            return *this;
-        }
-
-        MpMatrix &operator-=(const MpMatrix &subtrahend) {
-            if (subtrahend.dim != this->dim) {
-                throw std::runtime_error("Unable to subtract matricies of different dimensions");
-            }
-            
-            std::transform(this->begin(), this->end(), subtrahend.cbegin(), this->begin(), std::minus<fmp_t>());
-
-            return *this;
-        }
-
-        MpMatrix &operator-=(const fmp_t &subtrahend) {
-            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
-                fmp -= subtrahend;
-            });
-
-            return *this;
-        }
-
-        MpMatrix &operator*=(const MpMatrix &multiplicand) {
-            if (multiplicand.dim != this->dim) {
-                throw std::runtime_error("MpMatrix multiplication requires same dimensions");
-            }
-            
-            MpMatrix &multiplier = *this;
-            MpMatrix ret(this->dim, this->shift);
+        void dumpVecDouble(std::vector<double> &dest) const {
+            auto dim = this->getDim();
 
             for (size_t i = 0; i < dim; i++) {
                 for (size_t j = 0; j < dim; j++) {
-                    for (size_t k = 0; k < dim; k++) {
-                        ret(i, j) += multiplier(i, k) * multiplicand(k, j);
-                    }
+                    auto &elem = matrix[i][j];
+                    dest[i * dim + j] = elem.to_mpf().get_d();
                 }
             }
-
-            *this = ret;
-            return *this;
         }
 
-        MpMatrix &operator*=(const fmp_t &multiplicand) {
-            std::for_each(this->begin(), this->end(), [&](auto &fmp) {
-                fmp *= multiplicand;
-            });
-
-            return *this;
-        }
-
-        friend std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix);
+        friend std::ostream &operator<<(std::ostream &os, const MpMatrix &mp);
     };
 
-    inline MpMatrix operator+(MpMatrix lhs, const MpMatrix &rhs) {
-        lhs += rhs;
-        return lhs;
-    }
-
-    inline MpMatrix operator+(MpMatrix lhs, const fmp_t &rhs) {
-        lhs += rhs;
-        return lhs;
-    }
-
-    inline MpMatrix operator-(MpMatrix lhs, const MpMatrix &rhs) {
-        lhs -= rhs;
-        return lhs;
-    }
-
-    inline MpMatrix operator-(MpMatrix lhs, const fmp_t &rhs) {
-        lhs -= rhs;
-        return lhs;
-    }
-
-    inline MpMatrix operator*(MpMatrix lhs, const MpMatrix &rhs) {
-        lhs *= rhs;
-        return lhs;
-    }
-
-    inline MpMatrix operator*(MpMatrix lhs, const fmp_t &rhs) {
-        lhs *= rhs;
-        return lhs;
-    }
-
-
-    /**
-     * @brief Basic overload for the << operator to allow simple formatted-output to std::ostream
-     * 
-     * Example usage for \link MpMatrix \endlink named <code>matrix</code>:
-     * <code>std::cout << matrix;</code>
-     * 
-     * <strong>Note:</strong> As of now this <strong>does not</strong> set the precision of the 
-     * outputted numbers! This means that rounded results may be printed instead!
-     */
-    inline std::ostream &operator<<(std::ostream &os, const MpMatrix &matrix) {        
-        //Capture the initial flags of the output stream
+    inline std::ostream &operator<<(std::ostream &os, const MpMatrix &mp) {
         std::ios::fmtflags initialFlags(os.flags());
 
-        size_t counter = 0;
-        for (auto &num : matrix) {
-            counter++;
-            os << num << '\t';
-            if (counter % matrix.getDimension() == 0) {
+        auto mode = mp.getMode();
+
+        if (mode == COL_ORIENTED) {
+            for (size_t i = 0; i < mp.getDim(); i++) {
+                for (size_t j = 0; j < mp.getDim(); j++) {
+                    os << mp[j][i] << '\t';
+                }
+                os << '\n';
+            }
+        } else if (mode == ROW_ORIENTED) {
+            for (size_t i = 0; i < mp.getDim(); i++) {
+                for (size_t j = 0; j < mp.getDim(); j++) {
+                    os << mp[i][j] << '\t';
+                }
                 os << '\n';
             }
         }
 
-        //Restore the initial flags of the output streams
         os.flags(initialFlags);
 
-        return os << std::endl;
+        return os;
+    }
+
+    inline void multiply(const MpMatrix &multiplicand, const MpMatrix &multiplier, MpMatrix &product) {
+        if (multiplicand.getDim() != multiplier.getDim()) {
+            throw std::runtime_error("Unable to multiply MpMatricies of different dimensions");
+        }
+        
+        if (multiplicand.getDim() != product.getDim()) {
+            throw std::runtime_error("Destination (Product) matrix must be of same dimension as factors");
+        }
+
+        auto dim = multiplicand.getDim();
+        for (size_t i = 0; i < dim; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                for (size_t k = 0; k < dim; k++) {
+                    product[i][j] += (multiplicand[i][k] * multiplier[k][j]);
+                }
+            }
+        }
+    }
+
+    inline void transpose(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+
+        #pragma omp parallel for schedule(dynamic, 1)
+        for (size_t n = 0; n < (dim - 1); n++) {
+            for (size_t m = (n + 1); m < dim; m++) {
+                auto temp = matrix[m][n];
+                matrix[m][n] = matrix[n][m];
+                matrix[n][m] = temp;
+            }
+        }
+    }
+
+    inline void reorient(MpMatrix &matrix) {
+        transpose(matrix);
+
+        auto mode = matrix.getMode();
+        if (mode == COL_ORIENTED) {
+            matrix.setMode(ROW_ORIENTED);
+        } else if (mode == ROW_ORIENTED) {
+            matrix.setMode(COL_ORIENTED);
+        }
+    }
+
+    inline void reflect(MpMatrix &matrix) {
+        auto dim = matrix.getDim();
+
+        for (size_t n = 0; n < (dim - 1); n++) {
+            for (size_t m = (n + 1); m < dim; m++) {
+                auto temp = matrix[m][n];
+                matrix[m][n] = matrix[n][m];
+                // matrix[n][m] = temp;
+            }
+        }
     }
 }
