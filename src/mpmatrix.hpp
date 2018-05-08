@@ -1,9 +1,6 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <iomanip>
 #include <gmpxx.h>
 #include <vector>
 #include "fixedmpz.hpp"
