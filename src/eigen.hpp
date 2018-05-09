@@ -1,3 +1,10 @@
+/**
+ * @brief Functions for extracting the eigenvalues out of an MpMatrix
+ *
+ * @file eigen.hpp
+ * @author jwpereira
+ */
+
 #pragma once
 
 #include <vector>
@@ -8,6 +15,13 @@
 #include "mpmatrix.hpp"
 
 namespace momentmp {
+
+    /**
+     * @brief Take in an MpMatrix and return an std::vector of its eigenvalues
+     *
+     * First the MpMatrix is brought down to just double-precision, and then it is handed off to
+     * the GSL eigensolver for it to do its magic.
+     */
     inline void eigen_solve(const MpMatrix &matrix, std::vector<double> &eigenvalues) {
         auto dim = matrix.getDim();
         std::vector<double> m(dim * dim);
@@ -26,29 +40,27 @@ namespace momentmp {
         }
     }
 
+    /**
+     * @brief For this project, we would only be interested in the largest/smallest eigenvalue
+     */
     enum EigenMode : bool { SMALLEST=true, LARGEST=false };
 
+    /**
+     * @brief Calls eigen_solve, but then returns either the smallest/largest eigenvalue it finds
+     */
     inline double get_eigenvalue(const MpMatrix &matrix, const EigenMode mode) {
         auto dim = matrix.getDim();
         std::vector<double> eigenvalues(dim);
 
         eigen_solve(matrix, eigenvalues);
-        double est = eigenvalues[0];
 
         if (mode == SMALLEST) {
-            for (size_t index = 1; index < dim; index++) {
-                if (eigenvalues[index] < est) {
-                    est = eigenvalues[index];
-                }
-            }
+            return *(std::min_element(eigenvalues.begin(), eigenvalues.end()));
         } else if (mode == LARGEST) {
-            for (size_t index = 1; index < dim; index++) {
-                if (eigenvalues[index] > est) {
-                    est = eigenvalues[index];
-                }
-            }
+            return *(std::max_element(eigenvalues.begin(), eigenvalues.end()));
         }
 
-        return est;
+        // Hopefully this never happens
+        throw std::runtime_error("Desired output neither SMALLEST nor LARGEST");
     }
 }

@@ -1,3 +1,12 @@
+/**
+ * @brief Main driver file for the entire HankelHacker project
+ * 
+ * This file puts it all together.
+ * 
+ * @file main.cpp
+ * @author jwpereira
+ */
+
 #include <chrono>
 #include <iostream>
 #include <iomanip>
@@ -13,54 +22,84 @@
 
 using namespace momentmp;
 
+/**
+ * @brief This is the size of the matrix to be handed over to the GSL eigensolver
+ */
 const size_t INV_DIM = 10;
+
+/**
+ * @brief Boolean for whether to print log statements or not to stderr
+ */
 const bool DEBUG = true;
 
 void print_matrix(std::vector<double> &matrix, size_t dim) {
     for (size_t i = 0; i < (dim * dim); i++) {
         if (i > 1 && i % dim == 0) {
             std::cout << '\n';
-        } 
+        }
         std::cout << matrix[i] << '\t';
     }
     std::cout << '\n';
 }
 
+/**
+ * @brief Main routine for inverting the source matrix
+ *
+ * This function has the matrix decomposed into essentially LDLT form (via cholesky decomposition).
+ * The decomposition turns the input matrix into L with D superimposed on it. D is extracted out of
+ * L (leaving 1s in L's diagonal). D is not an actual MpMatrix but rather an MpArray, simply because
+ * it has all zeros except for the diagonal itself. By default, the input matrix is in
+ * column-oriented form such that the cholesky decomposition works. However, because the rest of the
+ * operations being performed will be more optimal in row-oriented form, L is reoriented to
+ * row-oriented form. From there, L is inverted to get L'. L' is then copied and then transposed to
+ * get (Lt)'.
+ *
+ * Typically by glove's rule, we could get the original matrix's inverse by three matrix
+ * multiplications: M'=(Lt)'D'L'. However, since we will really only be interested in the largest
+ * eigenvalue, we can focus on solely the first 10x10 (or the value of INV_DIM) upper left section
+ * of the inverted matrix. This is also why D is not inverted, as 1/D simply means dividing by D.
+ *
+ * Input matrix m is changed by this procedure, m_inverse will hold the 10x10 (or otherwised defined
+ * size) of the inverse of m. m_inverse should be passed onto the eigensolver.
+ */
 void inversion(MpMatrix &m, MpMatrix &m_inverse) {
     auto dim = m.getDim();
     auto shift = m.getShift();
 
-    if (DEBUG) std::cerr << "Cholesky-decompose input matrix... ";
     // Perform cholesky decomposition on the matrix
+        if (DEBUG) std::cerr << "Cholesky-decompose input matrix... ";
     cholesky_decompose(m);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
     // All this really does is help me keep the math straight lol
     auto &l = m;
 
     // Extract diagonals and impose them onto new matrix. Since we're inverting everything we'll
     // invert the diagonal here itself.
-    if (DEBUG) std::cerr << "Extracting diagonals... ";
+        if (DEBUG) std::cerr << "Extracting diagonals... ";
     MpArray diagonal(dim, shift);
     extract_diagonal(m, diagonal);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
     std::cout << "last diagonal: " << diagonal[diagonal.size() - 1] << std::endl;
 
-    // We'll first take the inverse of L to get L'
-    if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
-    reorient(l);    if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
-    if (DEBUG) std::cerr << "Inverting L to get L'... ";
+    // We'll take the inverse of L to get L'
+        if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
+    reorient(l);
+        if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
+        if (DEBUG) std::cerr << "Inverting L to get L'... ";
     invert(l);      if (DEBUG) std::cerr << "done!\n";
     auto &l_inverse = l;    // for max clarity, for me
-    
-    if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
+
+    // Then we'll take the transpose of that to get (Lt)'
+        if (DEBUG) std::cerr << "Transposing L' to get (Lt)'... ";
     MpMatrix lt_inverse(l);
     transpose(lt_inverse);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
-    if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
-    auto zero = 0^fmpshift(shift);
+    // Calculate out the first 10x10 (or INV_DIMxINV_DIM) of the inverse of the source matrix
+        if (DEBUG) std::cerr << "Creating first " << INV_DIM << "x" << INV_DIM << " of inverse of M... ";
+    auto zero = 0^fmpzshift(shift);
     for (size_t i = 0; (i < INV_DIM && i < dim); i++) {
         for (size_t j = 0; (j < INV_DIM && j < dim); j++) {
             auto sum = zero;
@@ -70,7 +109,7 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
             m_inverse[i][j] = sum;
         }
     }
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -85,29 +124,34 @@ int main(int argc, char *argv[]) {
     }
 
     auto dim = strtoul(argv[1], NULL, 10);
-    fmp_shift_t m_shift = strtoul(argv[2], NULL, 10);
+    fmpz_shift_t m_shift = strtoul(argv[2], NULL, 10);
 
     std::cout << "Size of matrix: " << dim << " by " << dim << "\n";
     std::cout << "Shift: " << m_shift << "\n";
 
+    // Since time is of interest, note the start time
     auto start_time = std::chrono::high_resolution_clock::now();
-    MpMatrix source(dim, m_shift, COL_ORIENTED);
 
     // Initialize the matrix with the seeding function
-    if (DEBUG) std::cerr << "Generating source matrix... ";
-    momentInit(source);
-    MpMatrix m(source), m_inverse(INV_DIM, m_shift, ROW_ORIENTED); // copy original before it gets changed
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "Generating source matrix... ";
+    MpMatrix m(dim, m_shift, COL_ORIENTED);
+    momentInit(m);
+    MpMatrix m_inverse(INV_DIM, m_shift, ROW_ORIENTED);
+        if (DEBUG) std::cerr << "done!\n";
 
-    if (DEBUG) std::cerr << "Finding inverse of source matrix:\n";
+    // Invert the source matrix
+        if (DEBUG) std::cerr << "Finding inverse of source matrix:\n";
     inversion(m, m_inverse);
 
-    if (DEBUG) std::cerr << "Extracting largest eigenvalue... ";
+    // Extract the largest eigenvalue
+        if (DEBUG) std::cerr << "Extracting largest eigenvalue... ";
     double inverse_of_largest_eigenvalue = 1.0 / get_eigenvalue(m_inverse, LARGEST);
-    if (DEBUG) std::cerr << "done!\n";
+        if (DEBUG) std::cerr << "done!\n";
 
-    std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific << inverse_of_largest_eigenvalue << '\n';
+    std::cout << "Inverse of largest: " << std::setprecision(15) <<  std::scientific
+              << inverse_of_largest_eigenvalue << '\n';
 
+    // Print out the time it took to do all these operations by taking the difference in times
     auto finish_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_time = finish_time - start_time;
     std::cout << "Completed in " << elapsed_time.count() << " seconds\n";
