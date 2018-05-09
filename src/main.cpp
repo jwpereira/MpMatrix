@@ -32,6 +32,12 @@ const size_t INV_DIM = 10;
  */
 const bool DEBUG = true;
 
+/**
+ * @brief Convenience function for printing out a vector-based matrix
+ * 
+ * This is purely for matrices that are actually std::vector<double>. MpMatrix has its own
+ * << overload that enables it to be printed out!
+ */
 void print_matrix(std::vector<double> &matrix, size_t dim) {
     for (size_t i = 0; i < (dim * dim); i++) {
         if (i > 1 && i % dim == 0) {
@@ -85,10 +91,11 @@ void inversion(MpMatrix &m, MpMatrix &m_inverse) {
 
     // We'll take the inverse of L to get L'
         if (DEBUG) std::cerr << "Transposing L into row-oriented form... ";
-    reorient(l);
-        if (DEBUG) std::cerr << "done!\n";    // first get L into row-oriented form
+    reorient(l);                                            // first get L into row-oriented form
+        if (DEBUG) std::cerr << "done!\n";    
         if (DEBUG) std::cerr << "Inverting L to get L'... ";
-    invert(l);      if (DEBUG) std::cerr << "done!\n";
+    invert(l);      
+        if (DEBUG) std::cerr << "done!\n";
     auto &l_inverse = l;    // for max clarity, for me
 
     // Then we'll take the transpose of that to get (Lt)'
@@ -117,12 +124,14 @@ int main(int argc, char *argv[]) {
     // better performance
     std::ios_base::sync_with_stdio(false);
 
+    // HankelHacker must be launched with 2 extra arguments <dim> and <shift>
     if (argc < 3) {
         std::cerr << "Error: Missing arguments.\n";
         std::cerr << "Usage: hankelhacker <dimension of source> <shift amount>\n";
         return -1;
     }
 
+    // Take command line arguments and store them
     auto dim = strtoul(argv[1], NULL, 10);
     fmpz_shift_t m_shift = strtoul(argv[2], NULL, 10);
 
